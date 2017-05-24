@@ -126,4 +126,20 @@
 
 	});
 
+// BGM
+	$("#toggleBGM").click(function() {
+		if ($(this).attr("title") == "点击播放") {
+			$(this).removeClass("fa-volume-off");
+			$(this).addClass("fa-volume-up");
+			$("#music").trigger("play");
+			$("#music").prop("volume", 0.2);
+			$(this).attr("title", "点击静音");
+		} else {
+			$(this).removeClass("fa-volume-up");
+			$(this).addClass("fa-volume-off");
+			$("#music").trigger("pause");
+			$(this).attr("title", "点击播放");
+		}
+	});
+
 })(jQuery);
