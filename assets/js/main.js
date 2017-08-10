@@ -144,7 +144,7 @@
 
 // Send Mail
 	$("#sendMail").click(function() {
-		var mailAdd = "mailto:djzhao627@gmial.com?subject=";
+		var mailAdd = "mailto:djzhao627@gmail.com?subject=";
 		mailAdd += $("#subject").val() + "&body=";
 		mailAdd += $("#message").val().replace("\n", "%0d%0a");
 		window.location.href=mailAdd;
