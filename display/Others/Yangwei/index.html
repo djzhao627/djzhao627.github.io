@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+    <div style="text-align: center;">
+        <img width="50%" src="images/motor.jpg" alt="">
+        <br>
+        <audio id="audio" src="http://oqa0g6g76.bkt.clouddn.com/Jun2_21_26_carAndMotor.mp3" controls="controls" autoplay="autoplay" loop="loop">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    <script>
+    //--创建页面监听，等待微信端页面加载完毕 触发音频播放
+    document.addEventListener('DOMContentLoaded', function() {
+        function audioAutoPlay() {
+            var audio = document.getElementById('audio');
+            audio.play();
+            document.addEventListener("WeixinJSBridgeReady", function() {
+                audio.play();
+            }, false);
+        }
+        audioAutoPlay();
+    });
+    //--创建触摸监听，当浏览器打开页面时，触摸屏幕触发事件，进行音频播放
+    document.addEventListener('touchstart', function() {
+        function audioAutoPlay() {
+            var audio = document.getElementById('audio');
+            audio.play();
+        }
+        audioAutoPlay();
+    });
+    </script>
+</body>
+
+</html>
