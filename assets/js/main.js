@@ -150,4 +150,8 @@
 		window.location.href=mailAdd;
 	});
 
+
+	// copyright
+	$("#copyright").text("© 2017 - " + new Date().getFullYear());
+
 })(jQuery);
