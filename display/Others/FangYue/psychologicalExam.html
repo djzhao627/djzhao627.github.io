@@ -1,0 +1,6558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>心理题库模拟考试</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: 'Microsoft YaHei', sans-serif;
+      }
+      body {
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .btn {
+        display: inline-block;
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px 5px;
+        transition: background-color 0.3s;
+      }
+      .btn:hover {
+        background-color: #2980b9;
+      }
+      .btn-start {
+        background-color: #27ae60;
+      }
+      .btn-start:hover {
+        background-color: #219653;
+      }
+      .btn-submit {
+        background-color: #e74c3c;
+      }
+      .btn-submit:hover {
+        background-color: #c0392b;
+      }
+      .question {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        border-left: 4px solid #3498db;
+      }
+      .question-type {
+        font-weight: bold;
+        color: #3498db;
+        margin-bottom: 5px;
+      }
+      .question-number {
+        font-weight: bold;
+        margin-right: 5px;
+      }
+      .question p {
+        font-weight: bold;
+        margin-top: 0;
+      }
+      .options {
+        margin-left: 20px;
+      }
+      .option {
+        margin-bottom: 8px;
+      }
+      input[type='radio'],
+      input[type='checkbox'] {
+        margin-right: 10px;
+      }
+      .result {
+        display: none;
+        margin-top: 30px;
+        padding: 20px;
+        background-color: #f0f8ff;
+        border-radius: 5px;
+      }
+      .score {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #2c3e50;
+      }
+      .wrong-answer {
+        background-color: #ffebee;
+        border-left: 4px solid #e74c3c;
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      .correct-answer {
+        color: #27ae60;
+        font-weight: bold;
+      }
+      .user-answer {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+      .controls {
+        text-align: center;
+        margin: 20px 0;
+      }
+      .progress {
+        text-align: center;
+        margin: 10px 0;
+        font-size: 14px;
+        color: #7f8c8d;
+      }
+      .settings {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f0f8ff;
+        border-radius: 5px;
+      }
+      select,
+      input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-right: 10px;
+      }
+      label {
+        margin-right: 15px;
+      }
+      .type-control {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .type-control input[type='number'] {
+        width: 60px;
+        margin-left: 10px;
+      }
+      .score-control {
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+      }
+      .score-control input {
+        width: 80px;
+      }
+      .toggle-all-results {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      .toggle-all-results label {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      .toggle-all-results input {
+        margin-right: 8px;
+      }
+      .correct-option {
+        color: #27ae60;
+      }
+      .wrong-option {
+        color: #e74c3c;
+      }
+      .all-answer {
+        display: none;
+        background-color: #e8f5e9;
+        border-left: 4px solid #4caf50;
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+        .container {
+          padding: 15px;
+        }
+        .btn {
+          display: block;
+          width: 100%;
+          margin: 10px 0;
+        }
+        .options {
+          margin-left: 10px;
+        }
+        .type-control {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .type-control input[type='number'] {
+          margin-left: 0;
+          margin-top: 5px;
+        }
+        .score-control {
+          margin-left: 0;
+          margin-top: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>心理题库模拟考试</h1>
+
+      <div id="intro">
+        <p>
+          本系统包含心理学题库中的单选题、多选题和判断题，可帮助您进行模拟考试练习。
+        </p>
+        <div class="settings">
+          <h3>考试设置</h3>
+          <div class="type-control">
+            <label>
+              <input type="checkbox" id="includeSingle" checked /> 单选题
+            </label>
+            <input type="number" id="singleCount" min="1" />
+            <div class="score-control">
+              <span>每题分值:</span>
+              <input
+                type="number"
+                id="singleScore"
+                value="0.65"
+                min="0.1"
+                step="0.05"
+              />
+            </div>
+          </div>
+          <div class="type-control">
+            <label>
+              <input type="checkbox" id="includeMulti" checked /> 多选题
+            </label>
+            <input type="number" id="multiCount" min="1" />
+            <div class="score-control">
+              <span>每题分值:</span>
+              <input
+                type="number"
+                id="multiScore"
+                value="1"
+                min="0.1"
+                step="0.05"
+              />
+            </div>
+          </div>
+          <div class="type-control">
+            <label>
+              <input type="checkbox" id="includeJudge" checked /> 判断题
+            </label>
+            <input type="number" id="judgeCount" min="1" />
+            <div class="score-control">
+              <span>每题分值:</span>
+              <input
+                type="number"
+                id="judgeScore"
+                value="0.4"
+                min="0.1"
+                step="0.05"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn btn-start" onclick="startExam()">开始考试</button>
+        </div>
+      </div>
+
+      <div id="exam" style="display: none">
+        <div class="progress" id="progress">题目 1/3</div>
+        <div id="questions-container"></div>
+        <div class="controls">
+          <button class="btn" onclick="prevQuestion()">上一题</button>
+          <button class="btn" onclick="nextQuestion()">下一题</button>
+          <button class="btn btn-submit" onclick="submitExam()">
+            提交试卷
+          </button>
+        </div>
+      </div>
+
+      <div id="result" class="result">
+        <h2>考试结果</h2>
+        <div class="score" id="score-display"></div>
+        <div class="toggle-all-results">
+          <label>
+            <input type="checkbox" id="showCorrectResults" /> 显示答对题目结果
+          </label>
+        </div>
+        <div id="wrong-answers"></div>
+        <div class="controls">
+          <button class="btn btn-start" onclick="restartExam()">
+            重新考试
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 题库数据（每个类型只保留两道题）
+      const questionBank = {
+        single: [
+          {
+            question: '科学心理学的创始人是（ ）。',
+            options: [
+              'A. W·詹姆斯',
+              'B. H·艾宾浩斯',
+              'C. W·冯特',
+              'D. S·弗洛伊德',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '躯体感觉中枢位于大脑皮层的（ ）。',
+            options: ['A. 额叶', 'B. 颞叶', 'C. 枕叶', 'D. 顶叶'],
+            answer: 'D',
+          },
+          {
+            question: '感觉适应指在外界刺激持续作用下感受性（ ）的现象。',
+            options: ['A. 降低', 'B. 提高', 'C. 不变', 'D. 发生变化'],
+            answer: 'D',
+          },
+          {
+            question: '遗忘的进程通常是（ ）。',
+            options: [
+              'A. 先慢后快',
+              'B. 先快后慢',
+              'C. 倒U型曲线',
+              'D. U型曲线',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '按照马斯洛的理论，尊重他人的需要属于（ ）。',
+            options: [
+              'A. 生理需要',
+              'B. 生长性需要',
+              'C. 社会需要',
+              'D. 缺失性需要',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '多血质的人其高级神经活动类型的基本特征是（ ）。',
+            options: [
+              'A. 强、平衡、灵活',
+              'B. 强、不平衡',
+              'C. 强、平衡、不灵活',
+              'D. 弱',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '经验描述阶段的社会心理学其特点是在（ ）的基础上，对人类的心理活动和行为方式进行客观的描述和分析。',
+            options: ['A. 观察', 'B. 实验', 'C. 思辩', 'D. 归纳'],
+            answer: 'A',
+          },
+          {
+            question: '由他人的判断所反应的自我概念，称为（ ）。',
+            options: ['A. 反思自我', 'B. 客我', 'C. 社会自我', 'D. 镜我'],
+            answer: 'D',
+          },
+          {
+            question: '詹姆士的自尊公式是（ ）。',
+            options: [
+              'A. 自尊=成功/自信',
+              'B. 自尊=成功/抱负',
+              'C. 自尊=自信/抱负',
+              'D. 自尊=抱负/成功',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '动机强度和活动效率的关系大致是（ ）型曲线。',
+            options: ['A. 倒U', 'B. U', 'C. 线性', 'D. N'],
+            answer: 'A',
+          },
+          {
+            question: '根据安德森的研究，最有吸引力的人格品质是（ ）。',
+            options: ['A. 智慧', 'B. 真诚', 'C. 热情', 'D. 幽默'],
+            answer: 'B',
+          },
+          {
+            question: 'MMPI的编制方法属于（ ）。',
+            options: [
+              'A. 理论推演法',
+              'B. 经验效标法',
+              'C. 总加评定法',
+              'D. 因素分析法',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '在MMPI的399题版本中，Q量表原始得分超过（ ）分，就表明答卷无效。',
+            options: ['A. 10', 'B. 12', 'C. 22', 'D. 30'],
+            answer: 'C',
+          },
+          {
+            question: '16PF在编制过程中主要使用了（ ）方法。',
+            options: [
+              'A. 方差分析',
+              'B. 因素分析',
+              'C. 经验效标',
+              'D. 理论效标',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '不属于EPQ分量表的是（ ）。',
+            options: ['A. E量表', 'B. D量表', 'C. P量表', 'D. N量表'],
+            answer: 'B',
+          },
+          {
+            question:
+              '如果SCL-90采用0～4的5级评分，筛选阳性的标准是总分超过（ ）。',
+            options: ['A. 70', 'B. 160', 'C. 90', 'D. 180'],
+            answer: 'B',
+          },
+          {
+            question: '皮亚杰的心理发展观认为心理起源于（ ）。',
+            options: ['A. 先天的成熟', 'B. 动作', 'C. 后天的经验', 'D. 吸吮'],
+            answer: 'B',
+          },
+          {
+            question: '艾里克森认为童年期（7岁～12岁）的主要发展任务是（ ）。',
+            options: [
+              'A. 获得勤奋感，克服自卑感',
+              'B. 获得完善感，避免失望或厌恶感',
+              'C. 获得自主感，克服羞耻感',
+              'D. 获得亲密感，避免孤独感',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '婴儿出生一两天后就有笑的反应，这种笑的反应属于（ ）。',
+            options: [
+              'A. 有选择的社会性微笑',
+              'B. 自发性微笑',
+              'C. 无选择的社会性微笑',
+              'D. 条件反射的笑',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '个体发展的第一反抗期大约发生在（ ）。',
+            options: ['A. 1～2岁', 'B. 3～4岁', 'C. 7～8岁', 'D. 13～14岁'],
+            answer: 'B',
+          },
+          {
+            question: '青春期的思维发展水平处于（ ）。',
+            options: [
+              'A. 感知运动阶段',
+              'B. 前运算阶段',
+              'C. 具体运算阶段',
+              'D. 形式运算阶段',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '柯尔伯格研究道德发展的方法是（ ）。',
+            options: [
+              'A. 对偶故事法',
+              'B. 道德两难故事法',
+              'C. 心理测验法',
+              'D. 临床法',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '精神分析理论认为本我的活动原则是（ ）。',
+            options: [
+              'A. 现实原则',
+              'B. 道德原则',
+              'C. 快乐原则',
+              'D. 社会原则',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '在人本主义看来，“存在焦虑”是（ ）。',
+            options: [
+              'A. 存在与责任的冲突',
+              'B. 存在与潜能的冲突',
+              'C. 潜能与本能的矛盾',
+              'D. 本能与社会的矛盾',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '病理性错觉的特点是（ ）。',
+            options: [
+              'A. 能够进行自我校正',
+              'B. 属于感知综合障碍',
+              'C. 不能接受现实检验',
+              'D. 属于思维形式障碍',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '体内有性质明确、部位具体的异常知觉，属于（ ）。',
+            options: [
+              'A. 内感性不适',
+              'B. 非真实感',
+              'C. 内脏性幻觉',
+              'D. 被洞悉感',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '抑制性的思维联想障碍的一种常见形式是（ ）。',
+            options: [
+              'A. 思维迟缓',
+              'B. 思维云集',
+              'C. 被洞悉感',
+              'D. 妄想心境',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '情感反应与现实刺激的性质不相称，这种表现可出现于（ ）。',
+            options: [
+              'A. 情感淡漠',
+              'B. 意志增强',
+              'C. 情绪倒错',
+              'D. 意志减退',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '一组直接阻碍和破坏个体生存与种族延续的事件是（ ）。',
+            options: [
+              'A. 灾难性压力',
+              'B. 生物性压力源',
+              'C. 叠加性压力',
+              'D. 精神性压力源',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '在心理咨询中，“理解”一词是（ ）的最恰当表达词。',
+            options: ['A. 中性态度', 'B. 赞同', 'C. 感同身受', 'D. 反对'],
+            answer: 'A',
+          },
+          {
+            question: '与精神分析理论关系最不密切的概念是（ ）。',
+            options: ['A. 宣泄', 'B. 防御', 'C. 焦虑', 'D. 意志自由'],
+            answer: 'D',
+          },
+          {
+            question: '认识领悟疗法的创始人是（ ）。',
+            options: ['A. 艾利斯', 'B. 钟友彬', 'C. 许又新', 'D. 弗洛伊德'],
+            answer: 'B',
+          },
+          {
+            question: '斯金纳的条件反射是（ ）。',
+            options: [
+              'A. 操作条件反射',
+              'B. 经典条件反射',
+              'C. 强化条件反射',
+              'D. 动作条件反射',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '性行为问题的背后有（ ）等多方面的原因。',
+            options: [
+              'A. 生理、心理和社会环境',
+              'B. 个人、集体与社会',
+              'C. 感情与理智的冲突',
+              'D. 坦率与封闭的矛盾',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '心理咨询师与求助者之间的距离属于（ ）。',
+            options: ['A. 公众', 'B. 个人', 'C. 社交', 'D. 亲密'],
+            answer: 'C',
+          },
+          {
+            question: '对摄入性会谈正确的理解是（ ）。',
+            options: [
+              'A. 不涉及咨询师初步观察到的疑点',
+              'B. 不能加入评价',
+              'C. 不涉及上级心理咨询师下达的目标',
+              'D. 不能加入提问',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '以如何选择职业为主题的会谈是（ ）。',
+            options: [
+              'A. 治疗性会谈',
+              'B. 咨询性会谈',
+              'C. 危机性会谈',
+              'D. 矫正性会谈',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '与求助者的多数临床表现有内在联系的因素就是引发临床表现的（ ）。',
+            options: ['A. 关键点', 'B. 主导症状', 'C. 参照点', 'D. 必要条件'],
+            answer: 'A',
+          },
+          {
+            question: '心理咨询师在心理诊断中为避免“贴标签”，应该以（ ）依据。',
+            options: [
+              'A. 现实的临床表现',
+              'B. 成熟的治疗理论',
+              'C. 丰富的临床经验',
+              'D. 异常行为的原因',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '咨询关系的建立受到（ ）的双重影响。',
+            options: [
+              'A. 咨询动机与期望程度',
+              'B. 咨询师与求助者',
+              'C. 合作态度与咨询方法',
+              'D. 自我觉察水平与行为方式',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '“完整的接纳”求助者，并不意味着（ ）。',
+            options: [
+              'A. 对求助者的恶习无动于衷',
+              'B. 接纳求助者全部的优点和缺点',
+              'C. 充分尊重求助者的价值观',
+              'D. 接受求助者的光明面和消极面',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '根据《中华人民共和国精神卫生法》，以下属于心理咨询师工作对象的是（ ）。',
+            options: [
+              'A. 精神分裂症患者',
+              'B. 确诊强迫神经症的来访者',
+              'C. 抑郁发作的来访者',
+              'D. 人际适应或情感问题的来访者',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '以下属于保密例外的是（ ）。',
+            options: [
+              'A. 来访者被确诊艾滋病',
+              'B. 来访者处于抑郁状态，有自杀计划',
+              'C. 来访者曾患乙型肝炎',
+              'D. 来访者有婚外性行为',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '有关咨询师的信息可以告知来访者的是（ ）。',
+            options: [
+              'A. 私人电话号码',
+              'B. 私人微信',
+              'C. 咨询预约电话',
+              'D. 家庭住址',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '“真诚不等于说实话”的含义是（ ）。',
+            options: [
+              'A. 真诚与说实话之间没有联系',
+              'B. 表述真诚不能通过言语',
+              'C. 表达真诚应有助于求助者成长',
+              'D. 实话实说不利于表达真诚',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '以下说法中错误的是（ ）。',
+            options: [
+              'A. 共情是最为关键的咨询特质',
+              'B. 共情是体验求助者的内心世界',
+              'C. 共情就是把握求助者的情感与思维',
+              'D. 共情就是必须与求助者拥有同样的情感',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '咨询阶段中最核心、最重要的实质阶段是（ ）阶段。',
+            options: ['A. 诊断', 'B. 咨询', 'C. 巩固', 'D. 评估'],
+            answer: 'B',
+          },
+          {
+            question: '参与性技术不包括（ ）。',
+            options: ['A. 倾听', 'B. 内容反应', 'C. 面质', 'D. 情感反应'],
+            answer: 'C',
+          },
+          {
+            question:
+              '使用开放式询问时，为了避免求助者产生被剖析的感觉，应该使询问（ ）。',
+            options: [
+              'A. 符合一定心理治疗理论框架',
+              'B. 符合求助者密切关注的问题',
+              'C. 建立在良好咨询关系基础上',
+              'D. 有助于校正求助者的价值观',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '具体化技术是指心理咨询师帮助求助者（ ）。',
+            options: [
+              'A. 将思想与情感分开',
+              'B. 清楚地说明所经历的事件',
+              'C. 将理想与现实分开',
+              'D. 将所思所想加以简要概括',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '世界上第一个心理学实验室诞生于（      ）。',
+            options: [
+              'A. 海德堡大学',
+              'B. 哥廷根大学',
+              'C. 莱比锡大学',
+              'D. 慕尼黑大学',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '猴子能认识事物的外部联系，说明它们的心理发展到了（      ）阶段。',
+            options: ['A. 知觉', 'B. 思维萌芽', 'C. 思维', 'D. 意识'],
+            answer: 'B',
+          },
+          {
+            question:
+              '“心理学有一个长的过去，但只有一个短的历史”，这是（      ）的名言。',
+            options: ['A. 冯特', 'B. 艾宾浩斯', 'C. 勒温', 'D. 魏特海墨'],
+            answer: 'B',
+          },
+          {
+            question: '要保护对暗适应，办法之一是戴上（      ）的眼镜。',
+            options: ['A. 绿色', 'B. 紫色', 'C. 红色', 'D. 黄色'],
+            answer: 'C',
+          },
+          {
+            question: '红灯灭后眼睛里出现了蓝绿色的灯影，这是（      ）。',
+            options: ['A. 正后像', 'B. 互补现象', 'C. 负后像', 'D. 彩色对比'],
+            answer: 'C',
+          },
+          {
+            question: '下列说法中正确的是（      ）。',
+            options: [
+              'A. 色觉有缺陷的人一般不能说出物体的颜色',
+              'B. 色觉有缺陷的人是靠饱和度的差别来辨认颜色的',
+              'C. 色觉异常绝大多数是遗传原因造成的',
+              'D. 红绿色盲的人看不见光谱上的黄和蓝',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '先前学习的材料对识记和回忆后学习材料的干扰作用是（      ）。',
+            options: ['A. 前摄抑制', 'B. 前干扰', 'C. 倒摄抑制', 'D. 后干扰'],
+            answer: 'A',
+          },
+          {
+            question: '视觉性言语中枢位于（      ）。',
+            options: ['A. 角回', 'B. 颞中回', 'C. 额叶', 'D. 颞上回'],
+            answer: 'A',
+          },
+          {
+            question:
+              '教室、病房需要安静，其装饰常用蓝、绿等冷色调，这应用的是（      ）。',
+            options: ['A. 感觉对比', 'B. 感觉后像', 'C. 联觉', 'D. 感觉适应'],
+            answer: 'C',
+          },
+          {
+            question: '梦出现在（      ）。',
+            options: [
+              'A. 快速眼动期',
+              'B. 深度睡眠阶段',
+              'C. 睡眠锭阶段',
+              'D. △波阶段',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '个体根据任务的要求把注意从一个对象指向并集中到另一个对象上，称为注意（      ）。',
+            options: ['A. 分散', 'B. 分配', 'C. 动摇', 'D. 转移'],
+            answer: 'D',
+          },
+          {
+            question:
+              '一朵云彩，看起来觉得它像一匹奔马，并且越看越像，这说明知觉具有（      ）。',
+            options: ['A. 恒常性', 'B. 选择性', 'C. 理解性', 'D. 整体性'],
+            answer: 'C',
+          },
+          {
+            question:
+              '在出现意外事件或遇到危险情景时出现的高度紧张的情绪状态叫（      ）。',
+            options: ['A. 激情', 'B. 心境', 'C. 应激', 'D. 焦虑'],
+            answer: 'C',
+          },
+          {
+            question:
+              '屏幕上一个静止的亮点，盯着它看时，有时候觉得它在移动，这是（      ）。',
+            options: [
+              'A. 自主运动',
+              'B. 似动现象',
+              'C. 动景现象',
+              'D. 诱导运动',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '记忆过程包括（      ）个基本环节。',
+            options: ['A. 2', 'B. 3', 'C. 4', 'D. 5'],
+            answer: 'B',
+          },
+          {
+            question: '瞬时记忆保持的时间在（      ）以内。',
+            options: ['A. 1秒', 'B. 2-3秒', 'C. 1分', 'D. 2-3分'],
+            answer: 'A',
+          },
+          {
+            question:
+              '对客观事物的本质和事物之间内在联系的认识过程是（      ）。',
+            options: ['A. 概念', 'B. 抽象', 'C. 思维', 'D. 概括'],
+            answer: 'C',
+          },
+          {
+            question:
+              '外界刺激停止作用后暂时保留一段时间的感觉形象叫（      ）。',
+            options: [
+              'A. 对光适应',
+              'B. 感觉后像',
+              'C. 对暗适应',
+              'D. 感觉对比',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '生物节律给人提供了判断时间的信息，这种节律也可叫（      ）。',
+            options: ['A. 生活节律', 'B. 作息规律', 'C. 生物钟', 'D. 生物反馈'],
+            answer: 'C',
+          },
+          {
+            question: '情绪变化的外部表现模式叫（      ）。',
+            options: ['A. 激情', 'B. 表征', 'C. 应激', 'D. 表情'],
+            answer: 'D',
+          },
+          {
+            question: '幻觉属于（      ）。',
+            options: ['A. 有意想象', 'B. 幻想', 'C. 无意想象', 'D. 妄想'],
+            answer: 'C',
+          },
+          {
+            question: '记忆是（      ）。',
+            options: [
+              'A. 过去的经验在头脑中的反映',
+              'B. 对客观事物直接的反映',
+              'C. 对客观事物间接的反映',
+              'D. 对客观事物概括的反映',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '思维的基本单位是（      ）。',
+            options: ['A. 推理', 'B. 判断', 'C. 概念', 'D. 决策'],
+            answer: 'C',
+          },
+          {
+            question: '机能主义心理学的主要特点是（      ）。',
+            options: [
+              'A. 强调心理学应该研究心理在适应环境中的机能作用',
+              'B. 认为心理学的任务是探讨意识经验由什么元素构成',
+              'C. 认为心理学的任务在于查明刺激与反应之间的规律性关系',
+              'D. 主张从整体上来研究心理现象',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '人本主义关心的主要命题不包括（      ）。',
+            options: ['A. 价值', 'B. 行为', 'C. 尊严', 'D. 潜能'],
+            answer: 'B',
+          },
+          {
+            question:
+              '通过观察和测量身体距离、生理指标的变化来推测个体的态度，这是态度测量的（      ）。',
+            options: [
+              'A. 量表法',
+              'B. 活动产品法',
+              'C. 投射法',
+              'D. 行为反应测量法',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '社会心理学经验描述阶段的特点是在（      ）的基础上，对人类的心理活动和行为方式进行客观的描述和分析。',
+            options: ['A. 观察', 'B. 实验', 'C. 思辩', 'D. 归纳'],
+            answer: 'A',
+          },
+          {
+            question:
+              '社会行为是由（      ）引起，并对社会产生影响的反应系统。',
+            options: [
+              'A. 社会因素',
+              'B. 现实生活',
+              'C. 周围环境',
+              'D. 即时情境',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '麦孤独（W.McDougall）用（      ）来解释人类的社会行为。',
+            options: ['A. 认知过程', 'B. 学习', 'C. 社会影响', 'D. 本能'],
+            answer: 'D',
+          },
+          {
+            question: '性别表示男女在（      ）。',
+            options: [
+              'A. 生物学方面的差异',
+              'B. 人格特征方面的差异',
+              'C. 社会学方面的差异',
+              'D. 行为方式方面的差异',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '全部社会化往往是以（      ）社会化为条件的。',
+            options: ['A. 语言', 'B. 道德', 'C. 概念', 'D. 性别'],
+            answer: 'D',
+          },
+          {
+            question:
+              '角色承担者不得不退出舞台，放弃原有角色，这属于（      ）。',
+            options: [
+              'A. 角色冲突',
+              'B. 角色不清',
+              'C. 角色中断',
+              'D. 角色失败',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '自尊是个体对其（      ）进行自我评价的结果。</div>',
+            options: [
+              'A. 社会角色',
+              'B. 自我概念',
+              'C. 自我意识',
+              'D. 自我价值',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '自尊=成功/抱负，这是詹姆士1890年在（      ）一书中提出来的。',
+            options: [
+              'A. 《社会心理学》',
+              'B. 《心理学原理》',
+              'C. 《社会心理学导论》',
+              'D. 《民族心理学》',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '在有限经验的基础上形成的刻板印象往往具有（      ）的性质。',
+            options: ['A. 积极', 'B. 双向作用', 'C. 消极', 'D. 定势作用'],
+            answer: 'D',
+          },
+          {
+            question:
+              '咨询师不思进取、故步自封，不能有效保持其服务的专业水准，其违背了（      ）原则。',
+            options: ['A. 善行', 'B. 诚信', 'C. 责任', 'D. 公正'],
+            answer: 'C',
+          },
+          {
+            question: '以下各项中，属于保密内容的是（      ）。',
+            options: [
+              'A. 求助者是艾滋病毒感染者',
+              'B. 求助者有幻觉、妄想症状',
+              'C. 求助者有虐待老人的行为',
+              'D. 求助者要伤害咨询师',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '心理咨询师因专业工作需要在案例讨论或教学、科研、写作等工作中采用心理咨询或治疗的案例时，应隐去（      ）。',
+            options: [
+              'A. 求助者的姓名',
+              'B. 求助者的职业',
+              'C. 求助者的年龄',
+              'D. 求助者的身体状况',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '遵守专业伦理，最大的受益者是（      ）。',
+            options: ['A. 咨询师', 'B. 咨询机构', 'C. 求助者', 'D. 求助者家属'],
+            answer: 'C',
+          },
+          {
+            question:
+              '根据《中华人民共和国精神卫生法》的规定，以下属于心理咨询师工作对象的是（      ）。',
+            options: [
+              'A. 患精神分裂症的求助者',
+              'B. 确诊强迫神经症的求助者',
+              'C. 抑郁发作的求助者',
+              'D. 适应障碍的求助者',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '心理评估最基本的方法是（      ）。',
+            options: ['A. 评估会谈', 'B. 观察法', 'C. 心理测验', 'D. 问卷调查'],
+            answer: 'A',
+          },
+          {
+            question:
+              '运用心理测验指导咨询师进行评估和分类，并决策用何种咨询方法进行干预，这种评估是（      ）。',
+            options: [
+              'A. 描述性评估',
+              'B. 解释性评估',
+              'C. 决策性评估',
+              'D. 预测性评估',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '初诊接待中心理咨询师的主要工作是（      ）。',
+            options: [
+              'A. 给求助者提供释放压抑的空间',
+              'B. 完整收集求助者的临床资料',
+              'C. 与求助者共同协商咨询目标',
+              'D. 对求助者进行明确的诊断',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '咨询师与求助者会谈时，应保持正常的（      ）。',
+            options: [
+              'A. 公众距离',
+              'B. 社交距离',
+              'C. 个人距离',
+              'D. 亲密距离',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '对于咨询过程中语言表达的要求，错误的是（      ）。',
+            options: [
+              'A. 语速要适中',
+              'B. 尽量使用专业术语',
+              'C. 吐字要清楚',
+              'D. 避免使用影响交流的方言',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '心理咨询师控制会谈内容与方向的方法不包括（      ）。',
+            options: ['A. 释义', 'B. 情感反应', 'C. 中断', 'D. 引导'],
+            answer: 'B',
+          },
+          {
+            question:
+              '针对心理正常且心理健康的求助者所进行的会谈是（      ）。',
+            options: [
+              'A. 鉴别性会谈',
+              'B. 治疗性会谈',
+              'C. 咨询性会谈',
+              'D. 危机性会谈',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '马隆和沃德提纲主要用于了解求助者的（      ）。',
+            options: [
+              'A. 个人成长史资料',
+              'B. 精神状态和行为特点',
+              'C. 婚姻及家庭资料',
+              'D. 生活的转折点和选择',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '以反问形式责备求助者的提问是（      ）。',
+            options: [
+              'A. 修饰性反问',
+              'B. 解释性问题',
+              'C. 责备性问题',
+              'D. 反问性问题',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '咨询师问求助者：“你现在的选择是什么，是离婚还是不离婚？”属于（      ）。',
+            options: [
+              'A. 修饰性反问',
+              'B. 解释性问题',
+              'C. 多重选择性问题',
+              'D. 多重问题',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '咨询师对求助者临床资料进行解释的先决条件是临床资料的（      ）。',
+            options: ['A. 多样性', 'B. 复杂性', 'C. 单一性', 'D. 可靠性'],
+            answer: 'D',
+          },
+          {
+            question:
+              '对引发临床表现的关键点的描述，错误的是该因素（      ）。',
+            options: [
+              'A. 与多数临床表现有内在联系',
+              'B. 在个体发展中持久地存在',
+              'C. 随着生活环境的变化改变自身形式',
+              'D. 本身性质随着形式的改变而改变',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '在整理临床资料时，应该对来自求助者亲友和中介人的资料（      ）。',
+            options: [
+              'A. 进行可靠性验证，并做必要的说明',
+              'B. 作为重要的参考依据直接使用',
+              'C. 先行筛选，避免对求助者构成伤害',
+              'D. 注意排序，不对求助者形成暗示',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '咨询师在心理诊断中为避免“贴标签”，应该以（      ）为依据。',
+            options: [
+              'A. 现实的临床表现',
+              'B. 成熟的治疗理论',
+              'C. 丰富的临床经验',
+              'D. 异常行为的原因',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '心理咨询师提出如“您只谈学生学习不好，可当今的教师水平和学校纪律又是个什么情况呢？”这类问题，属于（      ）。',
+            options: [
+              'A. 解释性问题',
+              'B. 修饰性反问',
+              'C. 责备性问题',
+              'D. 掩饰型反问',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '属于引发求助者心理问题的社会性因素是（      ）。',
+            options: [
+              'A. 家庭教养方式',
+              'B. 躯体疾病',
+              'C. 认知模式',
+              'D. 人格特征',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '桑德伯格提纲可以用来（      ）。',
+            options: [
+              'A. 整理归纳求助者一般资料',
+              'B. 了解求助者的精神状态',
+              'C. 采集求助者的背景资料',
+              'D. 了解求助者的行为特点',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '求助者，男性，40岁，公司职员。求助者于两个月前因工作失误，受到领导严厉批评。现在对工作小心谨慎，担心自己工作再次失误，会被领导开除；担心失业后妻子会跟自己离婚，离婚后自己无法单独抚养孩子。经常感觉胸闷气短、口干、出汗、心悸、两腿无力，身体不自主地发抖。到医院检查过几次，没有发现器质性疾病。明知自己的各种担心没有必要，但控制不住，为此内心非常痛苦，需要妻子安慰才能摆脱。能照常工作。该求助者目前的心理冲突是（      ）。',
+            options: [
+              'A. 常形冲突',
+              'B. 无明显冲突',
+              'C. 变形冲突',
+              'D. 精神病性冲突',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '某求助者的MMPI的测验结果显示Q量表得分为7，表明其（      ）。',
+            options: [
+              'A. 有7道无法回答的题目',
+              'B. 有说谎倾向，结果不可信',
+              'C. 没有明显的装病倾向',
+              'D. 临床症状比较明显',
+            ],
+            answer: 'C',
+          },
+          {
+            question: 'MMPI中，精神衰弱量表的英文缩写是（      ）。',
+            options: ['A. Pd', 'B. Pa', 'C. Pt', 'D. Sc'],
+            answer: 'C',
+          },
+          {
+            question:
+              '依据中国常模，MMPI的各个分量表的测验得分，T分在（      ）分以上，便可视为有病理异常表现或心理偏离现象。',
+            options: ['A. 50', 'B. 70', 'C. 60', 'D. 80'],
+            answer: 'B',
+          },
+          {
+            question:
+              '16PF中的恃强性得分为2分，表明受试者可能属于（      ）的人格特性。',
+            options: [
+              'A. 认真、负责、尽职',
+              'B. 严肃、冷静、寡言',
+              'C. 谦逊、顺从、通融',
+              'D. 好强、独立、积极',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '按照EPQ中国常模标准，属于典型的内向的E量表T分划界值为（      ）。',
+            options: [
+              'A. 大于61.5',
+              'B. 56.7至61.5',
+              'C. 38.5至43.3',
+              'D. 小于38.5',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '某求助者SAS 结果为粗分48 ，表明其出现（      ）。',
+            options: [
+              'A. 轻度焦虑',
+              'B. 中度焦虑',
+              'C. 中度抑郁',
+              'D. 重度抑郁',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '某求助者SCL-90各因子结果：躯体化2.7，强迫症状1.9，人际关系敏感1.8，抑郁3.4，焦虑2.5，敌对1.6，恐怖1.9，偏执1.5，精神病性1.9，其他2.7，该求助者不存在（      ）。',
+            options: [
+              'A. 主观的躯体不适感',
+              'B. 不自在感和自卑感',
+              'C. 悲观苦闷和兴趣减退',
+              'D. 睡眠饮食方面问题',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '某求助者SDS结果为标准分67，表明其出现（      ）。',
+            options: [
+              'A. 轻度焦虑',
+              'B. 中度焦虑',
+              'C. 中度抑郁',
+              'D. 重度抑郁',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '在MMPI的399题版本中，Q量表原始得分超过（      ）分，就表明答卷无效。',
+            options: ['A. 10', 'B. 15', 'C. 22', 'D. 30'],
+            answer: 'C',
+          },
+          {
+            question: '“完整的接纳”求助者，并不意味着（      ）。',
+            options: [
+              'A. 对求助者的恶习无动于衷',
+              'B. 接纳求助者全部的优点和缺点',
+              'C. 充分尊重求助者的价值观',
+              'D. 接受求助者的光明面和消极面',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '在难以接纳求助者时实施转介，可以体现咨询师对求助者的（      ）。',
+            options: ['A. 理解', 'B. 共情', 'C. 热情', 'D. 尊重'],
+            answer: 'D',
+          },
+          {
+            question: '积极关注指的是（      ）。',
+            options: [
+              'A. 关注求助者的身体状况',
+              'B. 关注求助者言行的积极方面',
+              'C. 关注求助者的负性情绪',
+              'D. 关注求助者对咨询师的态度',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '求助者说“男人没一个好东西”，咨询师需要运用（      ）技术加以澄清。',
+            options: ['A. 指导', 'B. 具体化', 'C. 解释', 'D. 内容表达'],
+            answer: 'B',
+          },
+          {
+            question:
+              '咨询师对求助者说“我的一个朋友遇到和你一样的问题，但他没有像你这样消沉、悲观”，这段话表明咨询师没有做到（      ）。',
+            options: ['A. 真诚', 'B. 内容表达', 'C. 共情', 'D. 自我开放'],
+            answer: 'C',
+          },
+          {
+            question: '咨询方案中需要明确的求助者的权利是（      ）。',
+            options: [
+              'A. 遵守职业道德',
+              'B. 提供真实的资料',
+              'C. 提出中止咨询',
+              'D. 完成商定的作业',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '倾听时比较正确的做法是（      ）。',
+            options: [
+              'A. 对求助者迅速做出诊断',
+              'B. 进行道德和正确性的评价',
+              'C. 随时指出求助者的错误',
+              'D. 不轻易打断求助者的叙述',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '内容反应是指心理咨询师（      ）。',
+            options: [
+              'A. 解释心理问题的原因',
+              'B. 判断心理问题的类型',
+              'C. 反馈求助者的谈话内容',
+              'D. 反馈求助者的主要情感',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '咨询师给求助者布置家庭作业，用到的技术是（      ）。',
+            options: ['A. 面质', 'B. 指导', 'C. 解释', 'D. 释义'],
+            answer: 'B',
+          },
+          {
+            question:
+              '咨询师体验求助者的内心“如同”体验自己的内心，但永远不能变成“就是”，指的是咨询师表达共情（      ）。',
+            options: [
+              'A. 要因人而异',
+              'B. 要善于把握角色',
+              'C. 应把握时机',
+              'D. 善于使用躯体语言',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '咨询师告知求助者自己的教育背景、从事咨询的时间、擅长与不擅长的咨询内容，主要体现的是（      ）的态度。',
+            options: ['A. 热情', 'B. 共情', 'C. 真诚', 'D. 积极关注'],
+            answer: 'C',
+          },
+          {
+            question: '咨询目标的商定时机是（      ）。',
+            options: [
+              'A. 与初诊接待同时进行',
+              'B. 完成心理诊断之后',
+              'C. 与收集临床资料同时进行',
+              'D. 进行心理诊断之前',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '阻抗的本质是（      ）。',
+            options: [
+              'A. 求助者对于咨询过程中自我暴露与改变的抵抗',
+              'B. 求助者对于咨询师的反感和抵制',
+              'C. 咨询师对求助者异常行为的阻拦',
+              'D. 咨询过程中出现的异常情况的总称',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '由于心理咨询师在价值观上的偏见而形成的咨询关系不匹配属于（      ）。',
+            options: ['A. 忌讳型', 'B. 冲突型', 'C. 欠缺型', 'D. 敏感型'],
+            answer: 'D',
+          },
+          {
+            question:
+              '制约心理咨询有效性的因素中，特殊有效性因素是指（      ）。',
+            options: [
+              'A. 针对性的咨询所产生的效果',
+              'B. 求助者本身潜在的适应能力',
+              'C. 求助者对咨询师的信心',
+              'D. 咨询师对求助者的尊重、关切',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '进行心理测验是心理咨询过程中（      ）的工作。',
+            options: [
+              'A. 诊断阶段',
+              'B. 咨询阶段',
+              'C. 评估阶段',
+              'D. 巩固阶段',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '阳性强化法的基本原理是（      ）。',
+            options: [
+              'A. 经典条件反射',
+              'B. 交互抑制理论',
+              'C. 操作条件反射',
+              'D. 社会学习理论',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '模仿法基本原理是（      ）。',
+            options: [
+              'A. 经典条件反射',
+              'B. 认知行为理论',
+              'C. 交互抑制理论',
+              'D. 社会学习理论',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '心理咨询的目标不是解决躯体疾病，而是针对引起躯体疾病的心理因素，这反映的是心理咨询目标（      ）的特征。',
+            options: [
+              'A. 具体或量化',
+              'B. 属于心理学范畴',
+              'C. 双方可接受',
+              'D. 可以评估',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '咨询师在咨询过程中（      ）是热情的最好表达。',
+            options: [
+              'A. 以礼相待、事事关心',
+              'B. 积极提问',
+              'C. 认真、耐心、不厌其烦',
+              'D. 不做评判',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '积极关注的最终目的是（      ）。',
+            options: [
+              'A. 使咨询师能够客观看待求助者',
+              'B. 让咨询师帮助求助者发现其优缺点',
+              'C. 使咨询师深入了解求助者',
+              'D. 促进求助者的自我发现与潜能开发',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '在收集临床资料所围绕的七个问题中，“how”指的是（      ）。',
+            options: [
+              'A. 求助者是谁',
+              'B. 事情发生的原因是什么',
+              'C. 发生了什么事',
+              'D. 事情是怎样演变的',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '咨询目标应该是由（      ）。',
+            options: [
+              'A. 咨询师根据自己的经验制定',
+              'B. 咨访双方共同协商确定',
+              'C. 求助者根据自己的问题确定',
+              'D. 上级咨询师指导确定',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '潜意识意识化，重组基本人格，是（      ）学派的咨询目标。',
+            options: ['A. 完形', 'B. 精神分析', 'C. 行为', 'D. 交互分析'],
+            answer: 'B',
+          },
+          {
+            question: '面谈技巧中最复杂的技术是（      ）。',
+            options: ['A. 解释', 'B. 指导', 'C. 释义', 'D. 面质'],
+            answer: 'D',
+          },
+          {
+            question: '倾听要以（      ）为基础。',
+            options: ['A. 热情', 'B. 接纳', 'C. 积极', 'D. 关注'],
+            answer: 'B',
+          },
+          {
+            question: '使用开放式提问最主要的目的是（      ）。',
+            options: [
+              'A. 搜集更多资料',
+              'B. 澄清事实',
+              'C. 缩小讨论范围',
+              'D. 获取重点',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '情感反应的最有效方式是针对求助者（      ）的情感。',
+            options: [
+              'A. 现在的',
+              'B. 可能出现的',
+              'C. 过去的',
+              'D. 希望出现的',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '当咨询过程中求助者出现言行不一致或前后言语不一致的情况时，咨询师要使用（      ）技术。',
+            options: ['A. 面质', 'B. 倾听', 'C. 解释', 'D. 鼓励'],
+            answer: 'A',
+          },
+          {
+            question:
+              '运用心理学理论来描述求助者的思想、情感和行为的原因、实质等，这种技术是（      ）。',
+            options: ['A. 解释', 'B. 面质', 'C. 释义', 'D. 指导'],
+            answer: 'A',
+          },
+          {
+            question: '在咨询过程中，各种影响性技术都属于（      ）。',
+            options: [
+              'A. 内容反应',
+              'B. 参与性概述',
+              'C. 内容表达',
+              'D. 影响性概述',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '咨询师使用自我开放的目的在于（      ）。',
+            options: [
+              'A. 获得求助者的认同',
+              'B. 对求助者表示同情',
+              'C. 抒发自己的情感',
+              'D. 促进求助者的开放',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '非言语行为在咨询中的主要作用是（      ）。',
+            options: [
+              'A. 宣泄情感',
+              'B. 实现反馈',
+              'C. 获得关注',
+              'D. 化解阻抗',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '1. 精神分析理论认为，在人的成长过程中，未来心理健康的充分必要条件是（ ）。',
+            options: [
+              'A. 合理使用不同形式的"心理防御机制"',
+              'B. 力比多的驱动',
+              'C. 顺利地度过"性心理"发展的每个阶段',
+              'D. 潜意识的结构',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '2. 正常和异常的心理活动是（　 　）。',
+            options: [
+              'A. 可以互相转化的',
+              'B. 无法进行分析的',
+              'C. 可以直接测量的',
+              'D. 无法间接测量的',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '3. 学习的最佳期限是指（ ）。',
+            options: [
+              'A. 心理机能已经发展成熟的时候',
+              'B. 学习条件已经完全具备的时候',
+              'C. 心理机能开始形成之前',
+              'D. 心理机能正在开始又尚未形成之时',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '4. 2～4个月的婴儿见到熟人与陌生人都会微笑，这属于（ ）。',
+            options: [
+              'A. 有选择的社会性微笑',
+              'B. 自发性微笑',
+              'C. 无选择的社会性微笑',
+              'D. 条件反射的笑',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '5. 艾里克森认为童年期良好的人格特征是（ ）。',
+            options: [
+              'A. 希望品质',
+              'B. 意志品质',
+              'C. 目标品质',
+              'D. 能力品质',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '6. 卡特尔的16种人格因素测验的编制方法属于（ ）。',
+            options: [
+              'A. 逻辑分析法',
+              'B. 因素分析法',
+              'C. 经验效标法',
+              'D. 综合分析法',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '7. 动机产生的内在条件是（ ）。',
+            options: ['A. 感觉', 'B. 需要', 'C. 气质', 'D. 性格'],
+            answer: 'B',
+          },
+          {
+            question: '8. 长时记忆遗忘的主要原因是自然衰退和（ ）。',
+            options: ['A. 固化', 'B. 迁移', 'C. 干扰', 'D. 定势'],
+            answer: 'C',
+          },
+          {
+            question: '9. 心理活动的器官是动物的（ ）。',
+            options: ['A. 感受器', 'B. 神经系统', 'C. 反射弧', 'D. 神经细胞'],
+            answer: 'B',
+          },
+          {
+            question: '10. 持环境决定论观点的是（ ） 。',
+            options: [
+              'A. 机能主义心理学',
+              'B. 格式塔心理学',
+              'C. 行为主义心理学',
+              'D. 精神分析学说',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '11. 不属于共情的含义是（ ）。',
+            options: [
+              'A. 咨询要以自己的参照框架去剖析求助者的问题',
+              'B. 咨询师借助求助者的言行，体验对方的内心世界',
+              'C. 咨询师借助知识经验，把握对方体验与其人格之间的联系',
+              'D. 咨询师要运用技巧将自己的共情传达给求助者',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '12. 共情对于咨询活动而言，最重要的意义在于（ ）。',
+            options: [
+              'A. 有利于咨询师收集材料',
+              'B. 可使求助者感到满足',
+              'C. 有利于求助者自我表达',
+              'D. 建立积极的咨询关系',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '13. 正确的咨询态度包括的五种要素是尊重、热情、真诚、共情和（ ）。',
+            options: [
+              'A. 咨询特质',
+              'B. 积极关注',
+              'C. 自诩技巧',
+              'D. 执业理念',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '14. 提出心理评估报告时，需要对临床资料进行核实，一般使用的方法是（ ）。',
+            options: ['A. 个案法', 'B. 测验法', 'C. 实验法', 'D. 调查法'],
+            answer: 'D',
+          },
+          {
+            question:
+              '15. 在严重心理问题的逐步诊断中对鉴别诊断有重要意义的是求助者的（ ）。',
+            options: [
+              'A. 精神分裂症家族史',
+              'B. 内心冲突的性质',
+              'C. 各种精神症家族史',
+              'D. 内心冲突的原因',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '16. 对求助者做出一般心理问题诊断前，应该分析求助者（　　）。',
+            options: [
+              'A. 是否有严重精神病家族史',
+              'B. 是否有器官性病变作基础',
+              'C. 其症状能否用心理学理论来解释',
+              'D. 其症状能否被心理咨询师所理解',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '17. 对心理咨询的正确理解是（　　）。',
+            options: [
+              'A. 心理咨询对某些问题是不一定能起作用',
+              'B. 与心理有关系的问题都应彻底解决',
+              'C. 心理咨询师要对解决求助者的心理问题作承诺',
+              'D. 心理咨询师要对不能解决的问题提供指导意见',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '18. 以下说法正确的是（ ）。',
+            options: [
+              'A. 心理诊断应该贯穿于心理咨询的全过程',
+              'B. 心理诊断应以群体平均特征为主要目标',
+              'C. 心理咨询师在做出初步诊断前不需要进行讨论和会诊',
+              'D. 摄入性会谈的会谈计划不需要考虑求助者的人格特点',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '19. 临床诊断最基本的技能是（　　）。',
+            options: [
+              'A. 建立和维护恰当的咨询关系',
+              'B. 熟悉各阶段工作程序和方法',
+              'C. 寻找引发临床表现的关键点',
+              'D. 掌握好诊断要点和鉴别要点',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '20. 如果心理咨询师对一般临床资料的评估没有把握时，应该（　　）。',
+            options: [
+              'A. 进行会诊',
+              'B. 形成初步诊断',
+              'C. 尽快转介',
+              'D. 进行心理测验',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '科学心理学的创始人是（      ）。',
+            options: [
+              'A. W·詹姆斯',
+              'B. H·艾宾浩斯',
+              'C. W·冯特',
+              'D. S·弗洛伊德',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '躯体感觉中枢位于大脑皮层的（      ）。',
+            options: ['A. 额叶', 'B. 颞叶', 'C. 枕叶', 'D. 顶叶'],
+            answer: 'D',
+          },
+          {
+            question: '感觉适应指在外界刺激持续作用下感受性（      ）的现象。',
+            options: ['A. 降低', 'B. 提高', 'C. 不变', 'D. 发生变化'],
+            answer: 'A',
+          },
+          {
+            question: '遗忘的进程通常是（      ）。',
+            options: [
+              'A. 先慢后快',
+              'B. 先快后慢',
+              'C. 倒U型曲线',
+              'D. U型曲线',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '按照马斯洛的理论，尊重他人的需要属于（      ）。',
+            options: [
+              'A. 生理需要',
+              'B. 生长性需要',
+              'C. 社会需要',
+              'D. 缺失性需要',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '多血质的人其高级神经活动类型的基本特征是（     ）。',
+            options: [
+              'A. 强、平衡、灵活',
+              'B. 强、不平衡',
+              'C. 强、平衡、不灵活',
+              'D. 弱',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '经验描述阶段的社会心理学其特点是在（      ）的基础上，对人类的心理活动和行为方式进行客观的描述和分析。',
+            options: ['A. 观察', 'B. 实验', 'C. 思辩', 'D. 归纳'],
+            answer: 'A',
+          },
+          {
+            question: '由他人的判断所反应的自我概念，称为（     ）。',
+            options: ['A. 反思自我', 'B. 客我', 'C. 社会自我', 'D. 镜我'],
+            answer: 'D',
+          },
+          {
+            question: '詹姆士的自尊公式是（     ）。',
+            options: [
+              'A. 自尊=成功/自信',
+              'B. 自尊=成功/抱负',
+              'C. 自尊=自信/抱负',
+              'D. 自尊=抱负/成功',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '动机强度和活动效率的关系大致是（      ）型曲线。',
+            options: ['A. 倒U', 'B. U', 'C. 线性', 'D. N'],
+            answer: 'A',
+          },
+          {
+            question: '根据安德森的研究，最有吸引力的人格品质是（      ）。',
+            options: ['A. 智慧', 'B. 真诚', 'C. 热情', 'D. 幽默'],
+            answer: 'B',
+          },
+          {
+            question: 'MMPI的编制方法属于（      ）。',
+            options: [
+              'A. 理论推演法',
+              'B. 经验效标法',
+              'C. 总加评定法',
+              'D. 因素分析法',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '在MMPI的399题版本中，Q量表原始得分超过（     ）分，就表明答卷无效。',
+            options: ['A. 10', 'B. 12', 'C. 22', 'D. 30'],
+            answer: 'D',
+          },
+          {
+            question: '16PF在编制过程中主要使用了（      ）方法。',
+            options: [
+              'A. 方差分析',
+              'B. 因素分析',
+              'C. 经验效标',
+              'D. 理论效标',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '不属于EPQ分量表的是（　  　）。',
+            options: ['A. E量表', 'B. D量表', 'C. P量表', 'D. N量表'],
+            answer: 'B',
+          },
+          {
+            question:
+              '如果SCL-90采用0～4的5级评分，筛选阳性的标准是总分超过（      ）。',
+            options: ['A. 70', 'B. 160', 'C. 90', 'D. 180'],
+            answer: 'B',
+          },
+          {
+            question: '皮亚杰的心理发展观认为心理起源于（      ）。',
+            options: ['A. 先天的成熟', 'B. 动作', 'C. 后天的经验', 'D. 吸吮'],
+            answer: 'B',
+          },
+          {
+            question:
+              '艾里克森认为童年期（7岁～12岁）的主要发展任务是（      ）。',
+            options: [
+              'A. 获得勤奋感，克服自卑感',
+              'B. 获得完善感，避免失望或厌恶感',
+              'C. 获得自主感，克服羞耻感',
+              'D. 获得亲密感，避免孤独感',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '婴儿出生一两天后就有笑的反应，这种笑的反应属于（      ）。',
+            options: [
+              'A. 有选择的社会性微笑',
+              'B. 自发性微笑',
+              'C. 无选择的社会性微笑',
+              'D. 条件反射的笑',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '个体发展的第一反抗期大约发生在（      ）。',
+            options: ['A. 1～2岁', 'B. 3～4岁', 'C. 7～8岁', 'D. 13～14岁'],
+            answer: 'B',
+          },
+          {
+            question: '青春期的思维发展水平处于（      ）。',
+            options: [
+              'A. 感知运动阶段',
+              'B. 前运算阶段',
+              'C. 具体运算阶段',
+              'D. 形式运算阶段',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '柯尔伯格研究道德发展的方法是（      ）。',
+            options: [
+              'A. 对偶故事法',
+              'B. 道德两难故事法',
+              'C. 心理测验法',
+              'D. 临床法',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '精神分析理论认为本我的活动原则是（      ）。',
+            options: [
+              'A. 现实原则',
+              'B. 道德原则',
+              'C. 快乐原则',
+              'D. 社会原则',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '在人本主义看来，“存在焦虑”是（　　）。',
+            options: [
+              'A. 存在与责任的冲突',
+              'B. 存在与潜能的冲突',
+              'C. 潜能与本能的矛盾',
+              'D. 本能与社会的矛盾',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '病理性错觉的特点是（      ）。',
+            options: [
+              'A. 能够进行自我校正',
+              'B. 属于感知综合障碍',
+              'C. 不能接受现实检验',
+              'D. 属于思维形式障碍',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '体内有性质明确、部位具体的异常知觉，属于（      ）。',
+            options: [
+              'A. 内感性不适',
+              'B. 非真实感',
+              'C. 内脏性幻觉',
+              'D. 被洞悉感',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '抑制性的思维联想障碍的一种常见形式是（      ）。',
+            options: [
+              'A. 思维迟缓',
+              'B. 思维云集',
+              'C. 被洞悉感',
+              'D. 妄想心境',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '情感反应与现实刺激的性质不相称，这种表现可出现于（      ）。',
+            options: [
+              'A. 情感淡漠',
+              'B. 意志增强',
+              'C. 情绪倒错',
+              'D. 意志减退',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '一组直接阻碍和破坏个体生存与种族延续的事件是（      ）。',
+            options: [
+              'A. 灾难性压力',
+              'B. 生物性压力源',
+              'C. 叠加性压力',
+              'D. 精神性压力源',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '在心理咨询中，“理解”一词是（      ）的最恰当表达词。',
+            options: ['A. 中性态度', 'B. 赞同', 'C. 感同身受', 'D. 反对'],
+            answer: 'C',
+          },
+          {
+            question: '与精神分析理论关系最不密切的概念是（      ）。',
+            options: ['A. 宣泄', 'B. 防御', 'C. 焦虑', 'D. 意志自由'],
+            answer: 'D',
+          },
+          {
+            question: '认识领悟疗法的创始人是（      ）。',
+            options: ['A. 艾利斯', 'B. 钟友彬', 'C. 许又新', 'D. 弗洛伊德'],
+            answer: 'A',
+          },
+          {
+            question: '斯金纳的条件反射是（      ）。',
+            options: [
+              'A. 操作条件反射',
+              'B. 经典条件反射',
+              'C. 强化条件反射',
+              'D. 动作条件反射',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '性行为问题的背后有（      ）等多方面的原因。',
+            options: [
+              'A. 生理、心理和社会环境',
+              'B. 个人、集体与社会',
+              'C. 感情与理智的冲突',
+              'D. 坦率与封闭的矛盾',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '心理咨询师与求助者之间的距离属于（      ）。',
+            options: ['A. 公众', 'B. 个人', 'C. 社交', 'D. 亲密'],
+            answer: 'C',
+          },
+          {
+            question: '对摄入性会谈正确的理解是（　 　）。',
+            options: [
+              'A. 不涉及咨询师初步观察到的疑点',
+              'B. 不能加入评价',
+              'C. 不涉及上级心理咨询师下达的目标',
+              'D. 不能加入提问',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '以如何选择职业为主题的会谈是（　　 ）。',
+            options: [
+              'A. 治疗性会谈',
+              'B. 咨询性会谈',
+              'C. 危机性会谈',
+              'D. 矫正性会谈',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '与求助者的多数临床表现有内在联系的因素就是引发临床表现的（      ）。',
+            options: ['A. 关键点', 'B. 主导症状', 'C. 参照点', 'D. 必要条件'],
+            answer: 'A',
+          },
+          {
+            question:
+              '心理咨询师在心理诊断中为避免“贴标签”，应该以（      ）依据。',
+            options: [
+              'A. 现实的临床表现',
+              'B. 成熟的治疗理论',
+              'C. 丰富的临床经验',
+              'D. 异常行为的原因',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '咨询关系的建立受到（      ）的双重影响。',
+            options: [
+              'A. 咨询动机与期望程度',
+              'B. 咨询师与求助者',
+              'C. 合作态度与咨询方法',
+              'D. 自我觉察水平与行为方式',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '“完整的接纳”求助者，并不意味着（      ）。',
+            options: [
+              'A. 对求助者的恶习无动于衷',
+              'B. 接纳求助者全部的优点和缺点',
+              'C. 充分尊重求助者的价值观',
+              'D. 接受求助者的光明面和消极面',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '根据《中华人民共和国精神卫生法》，以下属于心理咨询师工作对象的是（    ）。',
+            options: [
+              'A. 精神分裂症患者',
+              'B. 确诊强迫神经症的来访者',
+              'C. 抑郁发作的来访者',
+              'D. 人际适应或情感问题的来访者',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '以下属于保密例外的是（    ）。',
+            options: [
+              'A. 来访者被确诊艾滋病',
+              'B. 来访者处于抑郁状态，有自杀计划',
+              'C. 来访者曾患乙型肝炎',
+              'D. 来访者有婚外性行为',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '有关咨询师的信息可以告知来访者的是（    ）。',
+            options: [
+              'A. 私人电话号码',
+              'B. 私人微信',
+              'C. 咨询预约电话',
+              'D. 家庭住址',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '“真诚不等于说实话”的含义是（      ）。',
+            options: [
+              'A. 真诚与说实话之间没有联系',
+              'B. 表述真诚不能通过言语',
+              'C. 表达真诚应有助于求助者成长',
+              'D. 实话实说不利于表达真诚',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '以下说法中错误的是（      ）。',
+            options: [
+              'A. 共情是最为关键的咨询特质',
+              'B. 共情是体验求助者的内心世界',
+              'C. 共情就是把握求助者的情感与思维',
+              'D. 共情就是必须与求助者拥有同样的情感',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '咨询阶段中最核心、最重要的实质阶段是（      ）阶段。',
+            options: ['A. 诊断', 'B. 咨询', 'C. 巩固', 'D. 评估'],
+            answer: 'B',
+          },
+          {
+            question: '参与性技术不包括（　  　）。',
+            options: ['A. 倾听', 'B. 内容反应', 'C. 面质', 'D. 情感反应'],
+            answer: 'C',
+          },
+          {
+            question:
+              '使用开放式询问时，为了避免求助者产生被剖析的感觉，应该使询问（      ）。',
+            options: [
+              'A. 符合一定心理治疗理论框架',
+              'B. 符合求助者密切关注的问',
+              'C. 建立在良好咨询关系基础上',
+              'D. 有助于校正求助者的价值观',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '具体化技术是指心理咨询师帮助求助者（      ）。',
+            options: [
+              'A. 将思想与情感分开',
+              'B. 清楚地说明所经历的事件',
+              'C. 将理想与现实分开',
+              'D. 将所思所想加以简要概括',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '阳性强化法属于（      ）。',
+            options: [
+              'A. 精神分析疗法',
+              'B. 现实疗法',
+              'C. 行为疗法',
+              'D. 完形疗法',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '合理情绪疗法的完美目标是帮助求助者（　　）。',
+            options: [
+              'A. 学会现实合理的思维方式',
+              'B. 完善自我分析',
+              'C. 减少情绪困扰和不良行为',
+              'D. 完善自我体验',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '创伤后应激障碍的症状不包括（     ）。',
+            options: [
+              'A. 创伤性体验反复重现',
+              'B. 对创伤性经历的选择性遗忘',
+              'C. 情感的钝化和回避',
+              'D. 植物神经过度抑制',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '适应障碍的病程一般不超过（     ）。',
+            options: ['A. 1个月', 'B. 2 个月', 'C. 3个月', 'D. 6 个月'],
+            answer: 'D',
+          },
+          {
+            question:
+              '以过分要求严格与完美为主要特征的人格障碍是（     ）人格障碍。',
+            options: ['A. 焦虑性', 'B. 强迫性', 'C. 偏执性', 'D. 分裂样'],
+            answer: 'B',
+          },
+          {
+            question: '“心理正常” 意味着（     ）。',
+            options: [
+              'A. 包含精神病性症状在内的心理活动',
+              'B. 具备正常功能的心理活动',
+              'C. 包含心理不正常在内的心理活动',
+              'D. 一切可能的心理活动',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '健康心理学侧重于研究（     ）。',
+            options: [
+              'A. 伤害身体健康的生活方式和心理活动',
+              'B. 会造成心理活动异常的各种内在机制',
+              'C. 心理因素引发的躯体疾病的诊断治疗',
+              'D. 各种心理活动基本规律和普遍性原则',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '高层建筑失火，住在失火楼层的以上的人面临的是（     ）。',
+            options: [
+              'A. 双趋冲突',
+              'B. 趋避冲突',
+              'C. 双避冲突',
+              'D. 双重趋避冲突',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '“失魂落魄” 的状态，意味着个体处在“灾难征候群”的（     ）。',
+            options: ['A. 警觉期', 'B. 惊吓期', 'C. 恢复期', 'D. 康复期'],
+            answer: 'B',
+          },
+          {
+            question: '“四面楚歌” 可以用来形容（     ）。',
+            options: [
+              'A. 同时性叠加压力',
+              'B. 一般性单一性生活压力',
+              'C. 继时性叠加压力',
+              'D. 破坏性压力',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '针对心理正常且心理健康人群所进行的咨询是（      ）。',
+            options: [
+              'A. 心理健康咨询',
+              'B. 发展性咨询',
+              'C. 鉴别性咨询',
+              'D. 治疗性咨询',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '“狐狸吃不着葡萄，就说葡萄是酸的”是哪种防御机制的体现（     ）。',
+            options: ['A. 投射', 'B. 升华', 'C. 转移', 'D. 合理化'],
+            answer: 'D',
+          },
+          {
+            question:
+              '心理咨询师不能与求助者建立除咨访关系之外的其他关系，这是限制性观点中的（    ）。',
+            options: [
+              'A. 感情限制',
+              'B. 咨询目标限制',
+              'C. 职责限制',
+              'D. 中立态度限制',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '短程心理咨询一般在（     ）内完成。',
+            options: ['A. 2周', 'B. 1-3个月', 'C. 1个月内', 'D. 3-6个月'],
+            answer: 'B',
+          },
+          {
+            question: '对于咨询师感情限制的内涵，理解正确的是（     ）。',
+            options: [
+              'A. 咨询师与求助者的沟通限制在工作范围',
+              'B. 咨询师应该尽量的关心求助者一切问',
+              'C. 咨询师应该让自己的感情顺其自然',
+              'D. 咨询师不能表露自己的真实情感',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '桑德伯格提纲可以用来（     ）。',
+            options: [
+              'A. 整理归纳求助者一般资料',
+              'B. 了解求助者的精神状态',
+              'C. 采集求助者的背景资料',
+              'D. 了解求助者的行为特点',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '在初诊接待阶段，要让求助者了解心理咨询(       )。',
+            options: [
+              'A. 一定会越做越好',
+              'B. 跟着咨询师做即可',
+              'C. 不能解决哪些问题',
+              'D. 能迅速解决问题',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '心理咨询师在会谈中不断提问所起到的作用是(       )。',
+            options: [
+              'A. 让求助者自我探索',
+              'B. 产生准确的信息',
+              'C. 跟随咨询师的思路',
+              'D. 形成依赖和责任转移',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '归纳和解释临床资料的先决条件是（      ）。',
+            options: [
+              'A. 资料的可靠性',
+              'B. 使用统计方法',
+              'C. 赋予恰当意义',
+              'D. 进行迹象分析',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '心理咨询中对来访者的心理评估包括（     ）。',
+            options: [
+              'A. 心理问题的评估',
+              'B. 心理疾病的评估',
+              'C. 咨询效果的评估',
+              'D. 心理问题和咨询效果的评估',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '制约心理咨询有效性的因素中，特殊有效性因素是指(       )。',
+            options: [
+              'A. 针对性的咨询所产生的效果',
+              'B. 求助者本身潜在的适应能力',
+              'C. 求助者对咨询师的信心',
+              'D. 咨询师对求助者的尊重、关切',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '心理咨询师收集资料所围绕的七个问题中，＂how ＂指的是 （      ）。',
+            options: [
+              'A. 发生了什么事',
+              'B. 事情发生的原因是什么',
+              'C. 事情是怎样演变的',
+              'D. 事情是在什么样的环境下发生的',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '饱和策略属于（      ）。',
+            options: ['A. 增强法', 'B. 惩罚法', 'C. 消退法', 'D. 代币法'],
+            answer: 'C',
+          },
+          {
+            question:
+              '求助者说 “您说我毕业是参加工作还是考研究生这件事上该怎么办呢”，这种依赖的形式是属于（     ）形式。',
+            options: ['A. 不易察觉', 'B. 间接的', 'C. 阻抗', 'D. 直接的'],
+            answer: 'D',
+          },
+          {
+            question:
+              '难以接纳求助者时进行转介，最主要体现出咨询师对求助者的 (       )。',
+            options: ['A. 热情', 'B. 尊重', 'C. 共情', 'D. 关切'],
+            answer: 'B',
+          },
+          {
+            question: '使用面质技术时 ，错误的做法是（     ）。',
+            options: [
+              'A. 使用尝试性面质',
+              'B. 不以事实为依据',
+              'C. 避免个人发泄',
+              'D. 避免无情攻击',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '孩子考试取得好成绩后父母给予物质奖励，这种方法是（     ）。',
+            options: ['A. 正强化', 'B. 负强化', 'C. 正惩罚', 'D. 负惩罚'],
+            answer: 'A',
+          },
+          {
+            question: '以下不属于放松训练的特点的是(       )。',
+            options: [
+              'A. 简便易行',
+              'B068. 容易受时间和地点的限制',
+              'C. 实用有效',
+              'D. 可提高求助者改善症状的速度',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '合理情绪疗法的ABCDE 理论中，A代表（   	）。',
+            options: [
+              'A. 诱发事件',
+              'B. 对事件的看法、解释及评价 ，即信念',
+              'C. 咨询的效果',
+              'D. 对个体的不合理信念进行辩论',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '个体以自己的意愿为出发点，认为某一事物必定会发生或亦会发生的信念是(   )。',
+            options: [
+              'A. 夸大或缩小',
+              'B. 过分概括化',
+              'C. 绝对化要求',
+              'D. 糟糕至极',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '在遇到鱼和熊掌不可兼得时所体验到的动机冲突属于（	    ）。',
+            options: [
+              'A. 双趋式冲突',
+              'B. 双避式冲突',
+              'C. 趋避式冲突',
+              'D. 双重趋避式冲突',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '罗杰·斯佩里通过（     ）实验证明大脑两半球功能的不对称性。',
+            options: [
+              'A. 割裂脑',
+              'B. 经典条件反射',
+              'C. 操作条件反射',
+              'D. 工具条件反射',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '情绪变化的外部表现模式叫（   　）。',
+            options: ['A. 激情', 'B. 表征', 'C. 应激', 'D. 表情'],
+            answer: 'D',
+          },
+          {
+            question: '动机冲突往往出现在意志行动的(      )。',
+            options: [
+              'A. 准备阶段',
+              'B. 启动阶段',
+              'C. 结束阶段',
+              'D. 执行阶段',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '在卡特尔16种根源特质中，有的起源于体质因素，他称之为（     ）。',
+            options: [
+              'A. 素质特质',
+              'B. 动力特质',
+              'C. 能力特质',
+              'D. 气质特质',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '按照中国常模结果，SAS的标准分在60-69分之间者可能为（     ）。',
+            options: ['A. 正常', 'B. 轻度焦虑', 'C. 中度焦虑', 'D. 重度焦虑'],
+            answer: 'B',
+          },
+          {
+            question:
+              '为了评估心理问题以及临床症状的严重程度，可以使用的心理测验量表是（    ）。',
+            options: [
+              'A. 16PF',
+              'B. MMPI',
+              'C. 应对方式问卷',
+              'D. 生活事件量表',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              'LES共含有48条我国较常见的生活事件，其中不包括（      ）。',
+            options: [
+              'A. 应对方式问题',
+              'B. 家庭生活问题',
+              'C. 工作学习问题',
+              'D. 社交方面问题',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '肖计划的“应对方式问卷”的积分主要采用（　　）。',
+            options: ['A. 总分', 'B. 积极应对分', 'C. 因子分', 'D. 消极应对分'],
+            answer: 'C',
+          },
+          {
+            question: '从众是一种（      ）接受群体影响的方式。',
+            options: ['A. 被动地', 'B. 主动地', 'C. 积极地', 'D. 客观地'],
+            answer: 'A',
+          },
+          {
+            question: '个体努力表现，使他人对自己形成良好印象，这是(     )。',
+            options: [
+              'A. 光环效应',
+              'B. 印象管理',
+              'C. 刻板印象',
+              'D. 首因效应',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '用模仿来解释人类社会行为的学者是(      )。',
+            options: ['A. 詹姆士', 'B. 塔尔德', 'C. 谢夫勒', 'D. 柏拉图'],
+            answer: 'B',
+          },
+          {
+            question: '海德的P-O-X模式图中的“O”指(      )。',
+            options: ['A. 个体', 'B. 另一个对象', 'C. 他人', 'D. 重要他人'],
+            answer: 'C',
+          },
+          {
+            question: '婚姻关系的本质在于它的（    ）。',
+            options: ['A. 社会性', 'B. 经济性', 'C. 繁衍性', 'D. 激情性'],
+            answer: 'A',
+          },
+          {
+            question:
+              '以下各项中不属于《中国心理学会临床与咨询心理学工作伦理守则》所规定的心理咨询专业伦理的主要原则的是（      ）。',
+            options: ['A. 善行', 'B. 诚信', 'C. 责任', 'D. 热情'],
+            answer: 'D',
+          },
+          {
+            question: '以下咨询师和来访者属于双重关系的是（     ）。',
+            options: [
+              'A. 咨询师为自己的学生进行咨询',
+              'B. 为同事转介的来访者咨询',
+              'C. 来访者事先通过网络了解的咨询师',
+              'D. 由网络咨询变为面询',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '“最近发展区” 是指（      ）。',
+            options: [
+              'A. 儿童借助成人的帮助所达到的解决问题的水平',
+              'B. 在独立活动中所达到的解决问题的水平',
+              'C. 在有指导的情境下，儿童借助成人的帮助所达到的解决问题的水平与在独立活动中所达到的解决问题的水平之间的差距。',
+              'D. 儿童先天具有的水平和后天发展的水平的差异。',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '老年期心理发展的总趋势是（      ）。',
+            options: [
+              'A. 认知活动的退行性变化',
+              'B. 人格出现偏差',
+              'C. 情感脆弱',
+              'D. 人际交往技能降低',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '视觉悬崖是研究婴儿的（     ）装置。',
+            options: [
+              'A. 形状知觉',
+              'B. 颜色知觉',
+              'C. 动作发展',
+              'D. 深度知觉',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '人的记忆广度达到一生中的顶峰是在（     ）。',
+            options: ['A. 幼儿期', 'B. 童年期', 'C. 少年期', 'D. 青年期'],
+            answer: 'D',
+          },
+          {
+            question: '持环境决定论观点的是（      ）。',
+            options: [
+              'A. 机能主义心理学',
+              'B. 格式塔心理学',
+              'C. 行为主义心理学',
+              'D. 精神分析学说',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '躯体感觉中枢位于大脑皮层的（      ）。',
+            options: ['A. 额叶', 'B. 颞叶', 'C. 枕叶', 'D. 顶叶'],
+            answer: 'D',
+          },
+          {
+            question: '心理活动的器官是动物的（      ）。',
+            options: ['A. 感受器', 'B. 神经系统', 'C. 反射弧', 'D. 神经细胞'],
+            answer: 'B',
+          },
+          {
+            question: '长时记忆遗忘的主要原因是自然衰退和（      ）。',
+            options: ['A. 固化', 'B. 迁移', 'C. 干扰', 'D. 定势'],
+            answer: 'C',
+          },
+          {
+            question:
+              '个体根据任务的要求把注意从一个对象指向并集中到另一个对象上，称为注意（      ）。',
+            options: ['A. 分散', 'B. 分配', 'C. 动摇', 'D. 转移'],
+            answer: 'D',
+          },
+          {
+            question: '多血质的人其高级神经活动类型的基本特征是（     ）。',
+            options: [
+              'A. 强、平衡、灵活',
+              'B. 强、不平衡',
+              'C. 强、平衡、不灵活',
+              'D. 弱',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '经验描述阶段的社会心理学其特点是在（      ）的基础上，对人类的心理活动和行为方式进行客观的描述和分析。',
+            options: ['A. 观察', 'B. 实验', 'C. 思辩', 'D. 归纳'],
+            answer: 'A',
+          },
+          {
+            question: '由他人的判断所反应的自我概念，称为（     ）。',
+            options: ['A. 反思自我', 'B. 客我', 'C. 社会自我', 'D. 镜我'],
+            answer: 'D',
+          },
+          {
+            question: '詹姆士的自尊公式是（     ）。',
+            options: [
+              'A. 自尊=成功/自信',
+              'B. 自尊=成功/抱负',
+              'C. 自尊=自信/抱负',
+              'D. 自尊=抱负/成功',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '动机产生的内在条件是（      ）。',
+            options: ['A. 感觉', 'B. 需要', 'C. 气质', 'D. 性格'],
+            answer: 'B',
+          },
+          {
+            question: '根据安德森的研究，最有吸引力的人格品质是（      ）。',
+            options: ['A. 智慧', 'B. 真诚', 'C. 热情', 'D. 幽默'],
+            answer: 'B',
+          },
+          {
+            question: 'MMPI包含的重复题数量是（      ）个。',
+            options: ['A. 16', 'B. 8', 'C. 12', 'D. 0'],
+            answer: 'A',
+          },
+          {
+            question:
+              '在MMPI的399题版本中，Q量表原始得分超过（     ）分，就表明答卷无效。',
+            options: ['A. 10', 'B. 12', 'C. 22', 'D. 30'],
+            answer: 'C',
+          },
+          {
+            question: '卡特尔的16种人格因素测验的编制方法属于（      ）。',
+            options: [
+              'A. 逻辑分析法',
+              'B. 因素分析法',
+              'C. 经验效标法',
+              'D. 综合分析法',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '按照EPQ中国常模标准，属于典型的内向的E量表T分划界值为（      ）。',
+            options: [
+              'A. 大于61.5',
+              'B. 56.7至61.5',
+              'C. 38.5至43.3',
+              'D. 小于38.5',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '如果SCL-90采用0～4的5级评分，筛选阳性的标准是总分超过（      ）。',
+            options: ['A. 70', 'B. 160', 'C. 90', 'D. 180'],
+            answer: 'B',
+          },
+          {
+            question: '皮亚杰的心理发展观认为心理起源于（      ）。',
+            options: ['A. 先天的成熟', 'B. 动作', 'C. 后天的经验', 'D. 吸吮'],
+            answer: 'B',
+          },
+          {
+            question: '艾里克森认为童年期良好的人格特征是（      ）。',
+            options: [
+              'A. 希望品质',
+              'B. 意志品质',
+              'C. 目标品质',
+              'D. 能力品质',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '2～4个月的婴儿见到熟人与陌生人都会微笑，这属于（      ）。',
+            options: [
+              'A. 有选择的社会性微笑',
+              'B. 自发性微笑',
+              'C. 无选择的社会性微笑',
+              'D. 条件反射的笑',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '个体发展的第一反抗期大约发生在（      ）。',
+            options: ['A. 1～2岁', 'B. 3～4岁', 'C. 7～8岁', 'D. 13～14岁'],
+            answer: 'B',
+          },
+          {
+            question: '学习的最佳期限是指（      ）。',
+            options: [
+              'A. 心理机能已经发展成熟的时候',
+              'B. 学习条件已经完全具备的时候',
+              'C. 心理机能开始形成之前',
+              'D. 心理机能开始形成之时',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '柯尔伯格研究道德发展的方法是（      ）。',
+            options: [
+              'A. 对偶故事法',
+              'B. 道德两难故事法',
+              'C. 心理测验法',
+              'D. 临床法',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '正常和异常的心理活动是（　  　）。',
+            options: [
+              'A. 可以互相转化的',
+              'B. 无法进行分析的',
+              'C. 可以直接测量的',
+              'D. 无法间接测量的',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '精神分析理论认为，在人的成长过程中，未来心理健康的充分必要条件是（      ）。',
+            options: [
+              'A. 合理使用不同形式的“心理防御机制”',
+              'B. 力比多的驱动',
+              'C. 顺利地度过“性心理”发展的每个阶段',
+              'D. 潜意识的结构',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '精神疾病患者错觉的特点是（      ）。',
+            options: [
+              'A. 能够进行自我校正',
+              'B. 感知综合障碍',
+              'C. 不能接受现实检验',
+              'D. 感觉功能障碍',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '体内有性质明确、部位具体的异常知觉，属于（      ）。',
+            options: [
+              'A. 内感性不适',
+              'B. 非真实感',
+              'C. 内脏性幻觉',
+              'D. 被洞悉感',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '兴奋性思维联想障碍的一种常见形式是（　　）。',
+            options: [
+              'A. 思维奔逸',
+              'B. 思维散漫',
+              'C. 被洞悉感',
+              'D. 妄想心境',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '情感反应与现实刺激的性质不相称，这种表现可出现于（      ）。',
+            options: [
+              'A. 情感淡漠',
+              'B. 意志增强',
+              'C. 情绪倒错',
+              'D. 意志减退',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '遭受强烈的或灾难性的精神创伤后，数月至半年内出现的精神障碍，称为（　　）。',
+            options: [
+              'A. 情感障碍',
+              'B. 急性应激障碍',
+              'C. 认知障碍',
+              'D. 创伤后应激障碍',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '对于心理咨询师，可不必着重强调的条件是（　　）。',
+            options: [
+              'A. 自知之明',
+              'B. 善于容纳他人',
+              'C. 身体健康',
+              'D. 自我平衡能力',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '与精神分析理论关系最小的概念是（      ）。',
+            options: ['A. 宣泄', 'B. 防御', 'C. 焦虑', 'D. 意志自由'],
+            answer: 'D',
+          },
+          {
+            question: '认识领悟疗法的创始人是（      ）。',
+            options: ['A. 艾利斯', 'B. 钟友彬', 'C. 许又新', 'D. 弗洛伊德'],
+            answer: 'B',
+          },
+          {
+            question: '斯金纳的条件反射是（      ）。',
+            options: [
+              'A. 操作条件反射',
+              'B. 经典条件反射',
+              'C. 强化条件反射',
+              'D. 动作条件反射',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '性心理咨询工作的基本原则是（      ）。',
+            options: [
+              'A. 性知识、性生理、性技术教育相统一',
+              'B. 性知识、性生理、性法制教育相统一',
+              'C. 性知识、性道德、性法制教育相统一',
+              'D. 性医学、性道德、性法制教育相统一',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '为了避免在初诊接待中出现紧张情绪，心理咨询师应该在接诊前（      ）。',
+            options: [
+              'A. 深入了解并记录求助者的人格特点',
+              'B. 掌握并能够熟练使用各种理论方法',
+              'C. 熟练掌握初诊接待的各项操作步骤',
+              'D. 熟练掌握各种临床心理测验的使用',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '对摄入性会谈正确的理解是（　 　）。',
+            options: [
+              'A. 不涉及咨询师初步观察到的疑点',
+              'B. 不能加入评价',
+              'C. 不涉及上级心理咨询师下达的目标',
+              'D. 不能加入提问',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '当求助者发生意外时，心理咨询师采用会谈法予以帮助，这是（      ）。',
+            options: [
+              'A. 诊断性会谈',
+              'B. 摄入性会谈',
+              'C. 危机性会谈',
+              'D. 治疗性会谈',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '与求助者的多数临床表现有内在联系的因素就是引发临床表现的（      ）。',
+            options: ['A. 关键点', 'B. 主导症状', 'C. 参照点', 'D. 必要条件'],
+            answer: 'A',
+          },
+          {
+            question: '与求助者会谈时，心理咨询师的态度应该是（      ）。',
+            options: ['A. 积极', 'B. 非评判性', 'C. 顺从', 'D. 有指导性'],
+            answer: 'B',
+          },
+          {
+            question: '心理咨询能否成功主要取决于（      ）。',
+            options: [
+              'A. 心理咨询师的经验',
+              'B. 求助者的配合',
+              'C. 心理咨询师的修养',
+              'D. 家属们的配合',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '仅有尊重而没有热情的心理咨询师会使咨询关系显得（      ）。',
+            options: [
+              'A. 情理交融',
+              'B. 轻松愉快',
+              'C. 公事公办',
+              'D. 亲切友好',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '根据《中华人民共和国精神卫生法》，以下属于心理咨询师工作对象的是（    ）。',
+            options: [
+              'A. 精神分裂症患者',
+              'B. 确诊强迫神经症的来访者',
+              'C. 抑郁发作的来访者',
+              'D. 人际适应或情感问题的来访者',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '以下属于违背心理咨询伦理的行为是（    ）。',
+            options: [
+              'A. 咨询过程中进行书面记录',
+              'B. 询问来访者的婚姻状况',
+              'C. 未经来访者同意录音录像',
+              'D. 难以胜任时对来访者进行转介',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '有关咨询师的信息可以告知来访者的是（    ）。',
+            options: [
+              'A. 私人电话号码',
+              'B. 私人微信',
+              'C. 咨询预约电话',
+              'D. 家庭住址',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '“真诚不等于说实话”的含义是（      ）。',
+            options: [
+              'A. 真诚与说实话之间没有联系',
+              'B. 表述真诚不能通过言语',
+              'C. 表达真诚应有助于求助者成长',
+              'D. 实话实说不利于表达真诚',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '心理咨询师在咨询关系中最重要是（   ）。',
+            options: [
+              'A. 增进来访者的利益和福祉',
+              'B. 遵守保密原则',
+              'C. 满足求助者的需求',
+              'D. 尊重求助者',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '咨询阶段中最核心、最重要的实质阶段是（      ）阶段。',
+            options: ['A. 诊断', 'B. 咨询', 'C. 巩固', 'D. 评估'],
+            answer: 'B',
+          },
+          {
+            question: '鼓励技术中最常用的方法是（      ）。',
+            options: [
+              'A. 不断提问',
+              'B. 给予奖励',
+              'C. 及时表扬',
+              'D. 直接重复求助者的话',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '使用开放式询问时，为了避免求助者产生被剖析的感觉，应该使询问（      ）。',
+            options: [
+              'A. 符合一定心理治疗理论框架',
+              'B. 符合求助者密切关注的问',
+              'C. 建立在良好咨询关系基础上',
+              'D. 有助于校正求助者的价值观',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '具体化技术是指心理咨询师帮助求助者（      ）。',
+            options: [
+              'A. 将思想与情感分开',
+              'B. 清楚地说明所经历的事件',
+              'C. 将理想与现实分开',
+              'D. 将所思所想加以简要概括',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '阳性强化法属于（      ）。',
+            options: [
+              'A. 精神分析疗法',
+              'B. 现实疗法',
+              'C. 行为疗法',
+              'D. 完形疗法',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '在合理情绪疗法中，对“黄金规则”的正确理解应该是（　  　）。',
+            options: [
+              'A. 别人必须喜欢我，接受我',
+              'B. 我对别人怎样，别人必须对我怎样',
+              'C. 像你希望别人如何对待你那样去对待别人',
+              'D. 像别人希望的那样，去好好对待别人',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '创伤后应激障碍的症状不包括（     ）。',
+            options: [
+              'A. 创伤性体验反复重现',
+              'B. 对创伤性经历的选择性遗忘',
+              'C. 情感的钝化和回避',
+              'D. 植物神经过度抑制',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '适应障碍的病程一般不超过（     ）。',
+            options: ['A. 1个月', 'B. 2 个月', 'C. 3个月', 'D. 6 个月'],
+            answer: 'D',
+          },
+          {
+            question:
+              '以过分要求严格与完美为主要特征的人格障碍是（     ）人格障碍。',
+            options: ['A. 焦虑性', 'B. 强迫性', 'C. 偏执性', 'D. 分裂样'],
+            answer: 'B',
+          },
+          {
+            question: '“心理正常” 意味着（     ）。',
+            options: [
+              'A. 包含精神病性症状在内的心理活动',
+              'B. 具备正常功能的心理活动',
+              'C. 包含心理不正常在内的心理活动',
+              'D. 一切可能的心理活动',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '健康心理学侧重于研究（     ）。',
+            options: [
+              'A. 伤害身体健康的生活方式和心理活动',
+              'B. 会造成心理活动异常的各种内在机制',
+              'C. 心理因素引发的躯体疾病的诊断治疗',
+              'D. 各种心理活动基本规律和普遍性原则',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '高层建筑失火，住在失火楼层的以上的人面临的是（     ）。',
+            options: [
+              'A. 双趋冲突',
+              'B. 趋避冲突',
+              'C. 双避冲突',
+              'D. 双重趋避冲突',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '“失魂落魄” 的状态，意味着个体处在“灾难征候群”的（     ）。',
+            options: ['A. 警觉期', 'B. 惊吓期', 'C. 恢复期', 'D. 康复期'],
+            answer: 'B',
+          },
+          {
+            question: '“四面楚歌” 可以用来形容（     ）。',
+            options: [
+              'A. 同时性叠加压力',
+              'B. 一般性单一性生活压力',
+              'C. 继时性叠加压力',
+              'D. 破坏性压力',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '针对心理正常且心理健康人群所进行的咨询是（      ）。',
+            options: [
+              'A. 心理健康咨询',
+              'B. 发展性咨询',
+              'C. 鉴别性咨询',
+              'D. 治疗性咨询',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '“狐狸吃不着葡萄，就说葡萄是酸的”是哪种防御机制的体现（     ）。',
+            options: ['A. 投射', 'B. 升华', 'C. 转移', 'D. 合理化'],
+            answer: 'D',
+          },
+          {
+            question:
+              '心理咨询师不能与求助者建立除咨访关系之外的其他关系，这是限制性观点中的（   ）。',
+            options: [
+              'A. 感情限制',
+              'B. 咨询目标限制',
+              'C. 职责限制',
+              'D. 中立态度限制',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '短程心理咨询一般在（     ）内完成。',
+            options: ['A. 2周', 'B. 1-3个月', 'C. 1个月内', 'D. 3-6个月'],
+            answer: 'C',
+          },
+          {
+            question: '对于咨询师感情限制的内涵，理解正确的是（     ）。',
+            options: [
+              'A. 咨询师与求助者的沟通限制在工作范围',
+              'B. 咨询师应该尽量的关心求助者一切问',
+              'C. 咨询师应该让自己的感情顺其自然',
+              'D. 咨询师不能表露自己的真实情感',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '桑德伯格提纲可以用来（     ）。',
+            options: [
+              'A. 整理归纳求助者一般资料',
+              'B. 了解求助者的精神状态',
+              'C. 采集求助者的背景资料',
+              'D. 了解求助者的行为特点',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '在初诊接待阶段，要让求助者了解心理咨询(       )。',
+            options: [
+              'A. 一定会越做越好',
+              'B. 跟着咨询师做即可',
+              'C. 不能解决哪些问题',
+              'D. 能迅速解决问题',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '选择会谈的内容时，应该使之适合（      ）。',
+            options: [
+              'A. 咨询师的职业兴趣',
+              'B. 咨询师的理论水平',
+              'C. 求助者的心理强度',
+              'D. 求助者的接受能力',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '在整理临床资料时，应该对来自求助者亲友和中介人的资料（　　）。',
+            options: [
+              'A. 进行可靠性验证，并做必要的说明',
+              'B. 直接使用，并作为重要的参开依据',
+              'C. 先行筛选，避免对求助者构成伤害',
+              'D. 注意排序，不对求助者形成暗示',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '心理咨询中对来访者的心理评估包括（     ）。',
+            options: [
+              'A. 心理问题的评估',
+              'B. 心理疾病的评估',
+              'C. 咨询效果的评估',
+              'D. 心理问题和咨询效果的评估',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '制约心理咨询有效性的因素中，特殊有效性因素是指(       )。',
+            options: [
+              'A. 针对性的咨询所产生的效果',
+              'B. 求助者本身潜在的适应能力',
+              'C. 求助者对咨询师的信心',
+              'D. 咨询师对求助者的尊重、关切',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '收集求助者资料时下属问题中最重要的是（      ）。',
+            options: [
+              'A. who（谁）',
+              'B. what（什么）',
+              'C. why（为什么）',
+              'D. how（怎样）',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '饱和策略属于（      ）。',
+            options: ['A. 增强法', 'B. 惩罚法', 'C. 消退法', 'D. 代币法'],
+            answer: 'B',
+          },
+          {
+            question:
+              '求助者说 “您说我毕业是参加工作还是考研究生这件事上该怎么办呢”，这种依赖的形式是属于（     ）形式。',
+            options: ['A. 不易察觉', 'B. 间接的', 'C. 阻抗', 'D. 直接的'],
+            answer: 'B',
+          },
+          {
+            question:
+              '难以接纳求助者时进行转介，最主要体现出咨询师对求助者的 (       )。',
+            options: ['A. 热情', 'B. 尊重', 'C. 共情', 'D. 关切'],
+            answer: 'B',
+          },
+          {
+            question: '+I使用面质技术时，错误的做法是（     ）。',
+            options: [
+              'A. 使用尝试性面质',
+              'B. 不以事实为依据',
+              'C. 避免个人发泄',
+              'D. 避免无情攻击',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '孩子考试取得好成绩后父母给予物质奖励，这种方法是（     ）。',
+            options: ['A. 正强化', 'B. 负强化', 'C. 正惩罚', 'D. 负惩罚'],
+            answer: 'A',
+          },
+          {
+            question: '以下不属于放松训练的特点的是(       )。',
+            options: [
+              'A. 简便易行',
+              'B. 容易受时间和地点的限制',
+              'C. 实用有效',
+              'D. 可提高求助者改善症状的速度',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '在合理情绪疗法的修通阶段最常用的方法是（　　）。',
+            options: [
+              'A. 行为技术',
+              'B. 合理情绪想象技术',
+              'C. 家庭作业',
+              'D. 与不合理信念辩论',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '个体以自己的意愿为出发点，认为某一事物必定会发生或亦会发生的信念是(  )。',
+            options: [
+              'A. 夸大或缩小',
+              'B. 过分概括化',
+              'C. 绝对化要求',
+              'D. 糟糕至极',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '在遇到鱼和熊掌不可兼得时所体验到的动机冲突属于（	    ）。',
+            options: [
+              'A. 双趋式冲突',
+              'B. 双避式冲突',
+              'C. 趋避式冲突',
+              'D. 双重趋避式冲突',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '罗杰·斯佩里通过（     ）实验证明大脑两半球功能的不对称性。',
+            options: [
+              'A. 割裂脑',
+              'B. 经典条件反射',
+              'C. 操作条件反射',
+              'D. 工具条件反射',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '情绪变化的外部表现模式叫（   　）。',
+            options: ['A. 激情', 'B. 表征', 'C. 应激', 'D. 表情'],
+            answer: 'D',
+          },
+          {
+            question: '动机冲突往往出现在意志行动的(      )。',
+            options: [
+              'A. 准备阶段',
+              'B. 启动阶段',
+              'C. 结束阶段',
+              'D. 执行阶段',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '在卡特尔16种根源特质中，有的起源于体质因素，他称之为（     ）。',
+            options: [
+              'A. 素质特质',
+              'B. 动力特质',
+              'C. 能力特质',
+              'D. 气质特质',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '按照中国常模结果，SAS的标准分在60-69分之间者可能为（     ）。',
+            options: ['A. 正常', 'B. 轻度焦虑', 'C. 中度焦虑', 'D. 重度焦虑'],
+            answer: 'C',
+          },
+          {
+            question:
+              '为了评估心理问题以及临床症状的严重程度，可以使用的心理测验量表是（    ）。',
+            options: [
+              'A. 16PF',
+              'B. MMPI',
+              'C. 应对方式问卷',
+              'D. 生活事件量表',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              'LES共含有48条我国较常见的生活事件，其中不包括（      ）。',
+            options: [
+              'A. 应对方式问题',
+              'B. 家庭生活问题',
+              'C. 工作学习问题',
+              'D. 社交方面问题',
+            ],
+            answer: 'A',
+          },
+          {
+            question: 'SDS中反向项目的数量是（      ）个。',
+            options: ['A. 6', 'B. 10', 'C. 8', 'D. 12'],
+            answer: 'B',
+          },
+          {
+            question:
+              '在有人陪同的活动中，个体会感到社会比较的压力，从而提高工作或活动效率，这是社会促进中的（      ）。',
+            options: [
+              'A. 结伴效应',
+              'B. 观众效应',
+              'C. 比较效应',
+              'D. 竞争效应',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '个体努力表现，使他人对自己形成良好印象，这是(     )。',
+            options: [
+              'A. 光环效应',
+              'B. 印象管理',
+              'C. 刻板印象',
+              'D. 首因效应',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '根据霍兰德的观点，社会心理学的形成期是在（      ）。',
+            options: [
+              'A. 社会哲学阶段',
+              'B. 哲学思辨阶段',
+              'C. 经验描述阶段',
+              'D. 实证分析阶段',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '海德的态度转变理论是（      ）。',
+            options: [
+              'A. 角色理论',
+              'B. 认知失调论',
+              'C. 平衡理论',
+              'D. 社会交换论',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '“男女搭配，干活不累”，这是一种社会（      ）现象。',
+            options: ['A. 助长', 'B. 逍遥', 'C. 强化', 'D. 抑制'],
+            answer: 'A',
+          },
+          {
+            question:
+              '以下各项中不属于《中国心理学会临床与咨询心理学工作伦理守则》所规定的心理咨询专业伦理的主要原则的是（      ）。',
+            options: ['A. 善行', 'B. 诚信', 'C. 责任', 'D. 热情'],
+            answer: 'D',
+          },
+          {
+            question: '以下咨询师和来访者属于双重关系的是（     ）。',
+            options: [
+              'A. 咨询师为自己的学生进行咨询',
+              'B. 为同事转介的来访者咨询',
+              'C. 来访者事先通过网络了解的咨询师',
+              'D. 由网络咨询变为面询',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '“最近发展区” 是指（      ）。',
+            options: [
+              'A. 儿童借助成人的帮助所达到的解决问题的水平',
+              'B. 在独立活动中所达到的解决问题的水平',
+              'C. 在有指导的情境下，儿童借助成人的帮助所达到的解决问题的水平与在独立活动中所达到的解决问题的水平之间的差距。',
+              'D. 儿童先天具有的水平和后天发展的水平的差异。',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '在科尔伯格的道德发展理论中，服从和惩罚的道德定向阶段的儿童，其个体特征是（      ）。',
+            options: [
+              'A. 对成人或规章采取服从的态度，以免受到惩罚',
+              'B. 认为每个人都有自己的意图和需要',
+              'C. 认识到必须尊重他人的想法和看法',
+              'D. 强调对法律和权威的服从',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '视觉悬崖是研究婴儿的（     ）装置。',
+            options: [
+              'A. 形状知觉',
+              'B. 颜色知觉',
+              'C. 动作发展',
+              'D. 深度知觉',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '人的记忆广度达到一生中的顶峰是在（     ）。',
+            options: ['A. 幼儿期', 'B. 童年期', 'C. 少年期', 'D. 青年期'],
+            answer: 'C',
+          },
+          {
+            question: '世界上第一个心理学实验室诞生于（      ）。',
+            options: [
+              'A. 海德堡大学',
+              'B. 哥廷根大学',
+              'C. 莱比锡大学',
+              'D. 慕尼黑大学',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '猴子能认识事物的外部联系，说明它们的心理发展到了（      ）阶段。',
+            options: ['A. 知觉', 'B. 思维萌芽', 'C. 思维', 'D. 意识'],
+            answer: 'B',
+          },
+          {
+            question:
+              '“心理学有一个长的过去，但只有一个短的历史”，这是（      ）的名言。',
+            options: ['A. 冯特', 'B. 艾宾浩斯', 'C. 勒温', 'D. 魏特海墨'],
+            answer: 'B',
+          },
+          {
+            question: '要保护对暗适应，办法之一是戴上（      ）的眼镜。',
+            options: ['A. 绿色', 'B. 紫色', 'C. 红色', 'D. 黄色'],
+            answer: 'C',
+          },
+          {
+            question: '红灯灭后眼睛里出现了蓝绿色的灯影，这是（      ）。',
+            options: ['A. 正后像', 'B. 互补现象', 'C. 负后像', 'D. 彩色对比'],
+            answer: 'C',
+          },
+          {
+            question: '下列说法中正确的是（      ）。',
+            options: [
+              'A. 色觉有缺陷的人一般不能说出物体的颜色',
+              'B. 色觉有缺陷的人是靠饱和度的差别来辨认颜色的',
+              'C. 色觉异常绝大多数是遗传原因造成的',
+              'D. 红绿色盲的人看不见光谱上的黄和蓝',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '先前学习的材料对识记和回忆后学习材料的干扰作用是（      ）。',
+            options: ['A. 前摄抑制', 'B. 前干扰', 'C. 倒摄抑制', 'D. 后干扰'],
+            answer: 'A',
+          },
+          {
+            question: '视觉性言语中枢位于（      ）。',
+            options: ['A. 角回', 'B. 颞中回', 'C. 额叶', 'D. 颞上回'],
+            answer: 'A',
+          },
+          {
+            question:
+              '教室、病房需要安静，其装饰常用蓝、绿等冷色调，这应用的是（      ）。',
+            options: ['A. 感觉对比', 'B. 感觉后像', 'C. 联觉', 'D. 感觉适应'],
+            answer: 'C',
+          },
+          {
+            question: '梦出现在（      ）。',
+            options: [
+              'A. 快速眼动期',
+              'B. 深度睡眠阶段',
+              'C. 睡眠锭阶段',
+              'D. △波阶段',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '个体根据任务的要求把注意从一个对象指向并集中到另一个对象上，称为注意（      ）。',
+            options: ['A. 分散', 'B. 分配', 'C. 动摇', 'D. 转移'],
+            answer: 'D',
+          },
+          {
+            question:
+              '一朵云彩，看起来觉得它像一匹奔马，并且越看越像，这说明知觉具有（      ）。',
+            options: ['A. 恒常性', 'B. 选择性', 'C. 理解性', 'D. 整体性'],
+            answer: 'C',
+          },
+          {
+            question:
+              '在出现意外事件或遇到危险情景时出现的高度紧张的情绪状态叫（      ）。',
+            options: ['A. 激情', 'B. 心境', 'C. 应激', 'D. 焦虑'],
+            answer: 'C',
+          },
+          {
+            question:
+              '屏幕上一个静止的亮点，盯着它看时，有时候觉得它在移动，这是（      ）。',
+            options: [
+              'A. 自主运动',
+              'B. 似动现象',
+              'C. 动景现象',
+              'D. 诱导运动',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '记忆过程包括（      ）个基本环节。',
+            options: ['A. 2', 'B. 3', 'C. 4', 'D. 5'],
+            answer: 'B',
+          },
+          {
+            question: '瞬时记忆保持的时间在（      ）以内。',
+            options: ['A. 1秒', 'B. 2-3秒', 'C. 1分', 'D. 2-3分'],
+            answer: 'A',
+          },
+          {
+            question:
+              '对客观事物的本质和事物之间内在联系的认识过程是（      ）。',
+            options: ['A. 概念', 'B. 抽象', 'C. 思维', 'D. 概括'],
+            answer: 'C',
+          },
+          {
+            question:
+              '外界刺激停止作用后暂时保留一段时间的感觉形象叫（      ）。',
+            options: [
+              'A. 对光适应',
+              'B. 感觉后像',
+              'C. 对暗适应',
+              'D. 感觉对比',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '生物节律给人提供了判断时间的信息，这种节律也可叫（      ）。',
+            options: ['A. 生活节律', 'B. 作息规律', 'C. 生物钟', 'D. 生物反馈'],
+            answer: 'C',
+          },
+          {
+            question: '情绪变化的外部表现模式叫（      ）。',
+            options: ['A. 激情', 'B. 表征', 'C. 应激', 'D. 表情'],
+            answer: 'D',
+          },
+          {
+            question: '幻觉属于（      ）。',
+            options: ['A. 有意想象', 'B. 幻想', 'C. 无意想象', 'D. 妄想'],
+            answer: 'C',
+          },
+          {
+            question: '记忆是（      ）。',
+            options: [
+              'A. 过去的经验在头脑中的反映',
+              'B. 对客观事物直接的反映',
+              'C. 对客观事物间接的反映',
+              'D. 对客观事物概括的反映',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '思维的基本单位是（      ）。',
+            options: ['A. 推理', 'B. 判断', 'C. 概念', 'D. 决策'],
+            answer: 'C',
+          },
+          {
+            question: '机能主义心理学的主要特点是（      ）。',
+            options: [
+              'A. 强调心理学应该研究心理在适应环境中的机能作用',
+              'B. 认为心理学的任务是探讨意识经验由什么元素构成',
+              'C. 认为心理学的任务在于查明刺激与反应之间的规律性关系',
+              'D. 主张从整体上来研究心理现象',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '人本主义关心的主要命题不包括（      ）。',
+            options: ['A. 价值', 'B. 行为', 'C. 尊严', 'D. 潜能'],
+            answer: 'B',
+          },
+          {
+            question:
+              '通过观察和测量身体距离、生理指标的变化来推测个体的态度，这是态度测量的（      ）。',
+            options: [
+              'A. 量表法',
+              'B. 活动产品法',
+              'C. 投射法',
+              'D. 行为反应测量法',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '社会心理学经验描述阶段的特点是在（      ）的基础上，对人类的心理活动和行为方式进行客观的描述和分析。',
+            options: ['A. 观察', 'B. 实验', 'C. 思辩', 'D. 归纳'],
+            answer: 'A',
+          },
+          {
+            question:
+              '社会行为是由（      ）引起，并对社会产生影响的反应系统。',
+            options: [
+              'A. 社会因素',
+              'B. 现实生活',
+              'C. 周围环境',
+              'D. 即时情境',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '麦孤独（W.McDougall）用（      ）来解释人类的社会行为。',
+            options: ['A. 认知过程', 'B. 学习', 'C. 社会影响', 'D. 本能'],
+            answer: 'D',
+          },
+          {
+            question: '性别表示男女在（      ）。',
+            options: [
+              'A. 生物学方面的差异',
+              'B. 人格特征方面的差异',
+              'C. 社会学方面的差异',
+              'D. 行为方式方面的差异',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '全部社会化往往是以（      ）社会化为条件的。',
+            options: ['A. 语言', 'B. 道德', 'C. 概念', 'D. 性别'],
+            answer: 'A',
+          },
+          {
+            question:
+              '角色承担者不得不退出舞台，放弃原有角色，这属于（      ）。',
+            options: [
+              'A. 角色冲突',
+              'B. 角色不清',
+              'C. 角色中断',
+              'D. 角色失败',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '自尊是个体对其（      ）进行自我评价的结果。',
+            options: [
+              'A. 社会角色',
+              'B. 自我概念',
+              'C. 自我意识',
+              'D. 自我价值',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '自尊=成功/抱负，这是詹姆士1890年在（      ）一书中提出来的。',
+            options: [
+              'A. 《社会心理学》',
+              'B. 《心理学原理》',
+              'C. 《社会心理学导论》',
+              'D. 《民族心理学》',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '在有限经验的基础上形成的刻板印象往往具有（      ）的性质。',
+            options: ['A. 积极', 'B. 双向作用', 'C. 消极', 'D. 定势作用'],
+            answer: 'C',
+          },
+          {
+            question:
+              '对可控性因素的归因，使人们更可能对行为做出（      ）的预测。',
+            options: ['A. 准确', 'B. 变化', 'C. 稳定', 'D. 系统'],
+            answer: 'B',
+          },
+          {
+            question: '控制点理论的提出者是（      ）。',
+            options: ['A. 勒温', 'B. 罗特', 'C. 华生', 'D. 特里普利特'],
+            answer: 'B',
+          },
+          {
+            question: '在群体活动时，个体的侵犯性倾向于（      ）。',
+            options: ['A. 减少', 'B. 保持稳定', 'C. 增加', 'D. 受到抑制'],
+            answer: 'C',
+          },
+          {
+            question: '态度的ABC模型中，B指（      ）。',
+            options: ['A. 行为', 'B. 情感', 'C. 感觉', 'D. 行为倾向'],
+            answer: 'D',
+          },
+          {
+            question: '态度的特点不包括（      ）。',
+            options: ['A. 内在性', 'B. 抽象性', 'C. 对象性', 'D. 稳定性'],
+            answer: 'B',
+          },
+          {
+            question:
+              '一般来说，最能准确反映人的内心状况的身体语言形式是（      ）。',
+            options: ['A. 目光', 'B. 面部表情', 'C. 姿势', 'D. 空间距离'],
+            answer: 'A',
+          },
+          {
+            question:
+              '人际关系是人与人在沟通与交往中建立起来的直接的（      ）的联系。',
+            options: ['A. 心理上', 'B. 认知上', 'C. 行为上', 'D. 道德上'],
+            answer: 'A',
+          },
+          {
+            question:
+              '“个体与他人之间情感上相互亲密的状态，是人际关系中的一种肯定形式” ，这指的是（      ）。',
+            options: ['A. 亲合', 'B. 利他关系', 'C. 依赖', 'D. 人际吸引'],
+            answer: 'D',
+          },
+          {
+            question: '为了防控新冠肺炎疫情，人群聚集时应该保持（      ）。',
+            options: [
+              'A. 公众距离',
+              'B. 社交距离',
+              'C. 个人距离',
+              'D. 亲密距离',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '在吃“大锅饭”的单位，最容易产生的现象是（      ）。',
+            options: [
+              'A. 社会促进',
+              'B. 社会抑制',
+              'C. 平衡理论',
+              'D. 社会懈怠',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '“男女搭配，干活不累”，这是一种社会（      ）现象。',
+            options: ['A. 促进', 'B. 逍遥', 'C. 强化', 'D. 抑制'],
+            answer: 'A',
+          },
+          {
+            question: '解释社会促进和社会干扰现象的理论是（      ）。',
+            options: [
+              'A. 认知失调理论',
+              'B. 挫折侵犯学说',
+              'C. 优势反应强化说',
+              'D. 社会学习理论',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '关于爱情，错误的说法是（      ）。',
+            options: [
+              'A. 具有浪漫色彩',
+              'B. 是一种高级情感',
+              'C. 幼儿也有爱情',
+              'D. 人际吸引最强烈的形式',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '研究发现，婴儿出现深度知觉的年龄在（      ）个月左右。',
+            options: ['A. 1', 'B. 3', 'C. 6', 'D. 9'],
+            answer: 'C',
+          },
+          {
+            question:
+              '根据心理能量所指向的身体部位，弗洛伊德把心理发展分为（      ）个阶段。',
+            options: ['A. 3', 'B. 5', 'C. 4', 'D. 6'],
+            answer: 'B',
+          },
+          {
+            question: '总是具有积极意义的心理防御机制是（      ）。',
+            options: ['A. 压抑', 'B. 反向作用', 'C. 退行', 'D. 升华'],
+            answer: 'D',
+          },
+          {
+            question: '被尊为社会心理学之父的是（      ）。',
+            options: ['A. 詹姆士', 'B. 荣格', 'C. 勒温', 'D. 奥尔波特'],
+            answer: 'C',
+          },
+          {
+            question: '奥尔波特把人格特质分为两类，即（      ）。',
+            options: [
+              'A. 共同特质和个别特质',
+              'B. 共同特质和个人特质',
+              'C. 表面特质和根源特质',
+              'D. 表面特质和中心特质',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '皮亚杰研究儿童道德发展规律时使用的是（      ）。',
+            options: [
+              'A. 自然观察法',
+              'B. 控制实验法',
+              'C. 道德两难故事法',
+              'D. 对偶故事法',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '希波克拉底的气质类型学说是A型人格特质的主要成分不包括（      ）。',
+            options: ['A. 体型说', 'B. 星象说', 'C. 血型说', 'D. 体液说'],
+            answer: 'D',
+          },
+          {
+            question: '多血质的表现不包括（      ）。',
+            options: ['A. 内向', 'B. 敏捷', 'C. 兴趣多变', 'D. 善交际'],
+            answer: 'A',
+          },
+          {
+            question: '人格的五大模型中不包括（      ）因素。',
+            options: ['A. 精神质', 'B. 神经质', 'C. 宜人性', 'D. 外倾性'],
+            answer: 'A',
+          },
+          {
+            question:
+              '个体将不被社会所接受的冲动转化为社会赞许的行为，其所运用的防御机制是（      ）。',
+            options: ['A. 合理化', 'B. 升华', 'C. 反向形成', 'D. 投射'],
+            answer: 'B',
+          },
+          {
+            question:
+              '在有人陪同的活动中，个体会感到社会比较的压力，从而提高工作或活动效率，这是社会促进中的（      ）。',
+            options: [
+              'A. 结伴效应',
+              'B. 观众效应',
+              'C. 比较效应',
+              'D. 竞争效应',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '根据安德森的研究，最让人反感的人格品质是（      ）。',
+            options: ['A. 自私', 'B. 说谎', 'C. 古怪', 'D. 粗鲁'],
+            answer: 'B',
+          },
+          {
+            question: '第一发展加速期是（      ）。',
+            options: ['A. 婴幼儿期', 'B. 儿童期', 'C. 青春期', 'D. 青年期'],
+            answer: 'A',
+          },
+          {
+            question: '人本主义的代表人物是（      ）。',
+            options: ['A. 李克特', 'B. 沙利文', 'C. 罗杰斯', 'D. 班杜拉'],
+            answer: 'C',
+          },
+          {
+            question: '教学应该走在发展的前面，这是（      ）理论的观点。',
+            options: ['A. 维果茨基', 'B. 皮亚杰', 'C. 柯尔伯格', 'D. 华生'],
+            answer: 'A',
+          },
+          {
+            question: '具体运算阶段的年龄范围大致在（      ）左右。',
+            options: [
+              'A. 0～2岁',
+              'B. 2～6、7岁',
+              'C. 6、7～11、12岁',
+              'D. 11、12岁及以后',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '幼儿的自我中心现象表现为（      ）。',
+            options: [
+              'A. 只关注个人的需求而不考虑他人的需求',
+              'B. 缺乏观点采择能力，以自己的感受和想法取代他人的感受和想法',
+              'C. 善于吸引其他小朋友关注自己，并能影响他人。',
+              'D. 具有物主意识，缺乏与他人分享意识。',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '自我意识发展的第一个飞跃表现为（      ）。',
+            options: [
+              'A. 将自己作为活动主体来认识',
+              'B. 客体我自我意识的出现',
+              'C. 能有自己独特的感受',
+              'D. 能意识到自己的存在',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '象征性游戏又称为（      ）。',
+            options: [
+              'A. 模仿游戏',
+              'B. 假装游戏',
+              'C. 规则游戏',
+              'D. 机能游戏',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '在个体认知发展中最早发生，最先成熟的心理过程是（      ）。',
+            options: ['A. 感知觉', 'B. 形象记忆', 'C. 无意注意', 'D. 动作记忆'],
+            answer: 'A',
+          },
+          {
+            question: '艾里克森认为成年早期的主要发展任务是（      ）。',
+            options: [
+              'A. 获得勤奋感，克服自卑感',
+              'B. 形成角色同一性，防止角色混乱',
+              'C. 获得亲密感，避免孤独感',
+              'D. 获得繁衍感，避免停滞感',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '艾里克森把人格发展划分为（      ）个阶段。',
+            options: ['A. 3', 'B. 6', 'C. 5', 'D. 8'],
+            answer: 'D',
+          },
+          {
+            question:
+              '制约心理咨询有效性的因素中，特殊有效性因素是指(       )。',
+            options: [
+              'A. 针对性的咨询所产生的效果',
+              'B. 求助者本身潜在的适应能力',
+              'C. 求助者对咨询师的信心',
+              'D. 咨询师对求助者的尊重、关切',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '收集求助者资料时最重要的是明确（      ）。',
+            options: [
+              'A. who（谁）',
+              'B. what（什么）',
+              'C. why（为什么）',
+              'D. how（怎样）',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '饱和策略属于（      ）。',
+            options: ['A. 增强法', 'B. 惩罚法', 'C. 消退法', 'D. 代币法'],
+            answer: 'B',
+          },
+          {
+            question:
+              '求助者说 “您说我毕业是参加工作还是考研究生这件事上该怎么办呢”，这种依赖的形式是属于（     ）形式。',
+            options: ['A. 不易察觉', 'B. 间接的', 'C. 阻抗', 'D. 直接的'],
+            answer: 'B',
+          },
+          {
+            question:
+              '难以接纳求助者时进行转介，最主要体现出咨询师对求助者的 (       )。',
+            options: ['A. 热情', 'B. 尊重', 'C. 共情', 'D. 关切'],
+            answer: 'B',
+          },
+          {
+            question: '使用面质技术时 ，错误的做法是（     ）。',
+            options: [
+              'A. 使用尝试性面质',
+              'B. 不以事实为依据',
+              'C. 避免个人发泄',
+              'D. 避免无情攻击',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              '孩子考试取得好成绩后父母给予物质奖励，这种方法是（     ）。',
+            options: ['A. 正强化', 'B. 负强化', 'C. 正惩罚', 'D. 负惩罚'],
+            answer: 'A',
+          },
+          {
+            question: '以下不属于放松训练的特点的是(       )。',
+            options: [
+              'A. 简便易行',
+              'B. 容易受时间和地点的限制',
+              'C. 实用有效',
+              'D. 可提高求助者改善症状的速度',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '在合理情绪疗法的修通阶段最常用的方法是（　　）。',
+            options: [
+              'A. 行为技术',
+              'B. 合理情绪想象技术',
+              'C. 家庭作业',
+              'D. 与不合理信念辩论',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '个体以自己的意愿为出发点，认为某一事物必定会发生或亦会发生的信念是(  )。',
+            options: [
+              'A. 夸大或缩小',
+              'B. 过分概括化',
+              'C. 绝对化要求',
+              'D. 糟糕至极',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '在遇到鱼和熊掌不可兼得时所体验到的动机冲突属于（	    ）。',
+            options: [
+              'A. 双趋式冲突',
+              'B. 双避式冲突',
+              'C. 趋避式冲突',
+              'D. 双重趋避式冲突',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '斯佩里通过（     ）实验证明大脑两半球功能的不对称性。',
+            options: [
+              'A. 割裂脑',
+              'B. 经典条件反射',
+              'C. 操作条件反射',
+              'D. 工具条件反射',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '按情绪状态可把情绪分为（      ）。',
+            options: [
+              'A. 心境、激情、应激',
+              'B. 道德感、理智感和美感',
+              'C. 基本情绪和复合情绪',
+              'D. 快乐、愤怒、悲哀和恐惧',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '动机冲突往往出现在意志行动的(      )。',
+            options: [
+              'A. 准备阶段',
+              'B. 启动阶段',
+              'C. 结束阶段',
+              'D. 执行阶段',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '在卡特尔16种根源特质中，有的起源于体质因素，他称之为（     ）。',
+            options: [
+              'A. 素质特质',
+              'B. 动力特质',
+              'C. 能力特质',
+              'D. 气质特质',
+            ],
+            answer: 'A',
+          },
+          {
+            question:
+              '按照中国常模结果，SAS的标准分在60-69分之间者可能为（     ）。',
+            options: ['A. 正常', 'B. 轻度焦虑', 'C. 中度焦虑', 'D. 重度焦虑'],
+            answer: 'C',
+          },
+          {
+            question:
+              '为了评估心理问题以及临床症状的严重程度，可以使用的心理测验量表是（    ）。',
+            options: [
+              'A. 16PF',
+              'B. MMPI',
+              'C. 应对方式问卷',
+              'D. 生活事件量表',
+            ],
+            answer: 'B',
+          },
+          {
+            question:
+              'LES共含有48条我国较常见的生活事件，其中不包括（      ）。',
+            options: [
+              'A. 应对方式问题',
+              'B. 家庭生活问题',
+              'C. 工作学习问题',
+              'D. 社交方面问题',
+            ],
+            answer: 'A',
+          },
+          {
+            question: 'SDS中反向项目的数量是（      ）个。',
+            options: ['A. 6', 'B. 10', 'C. 8', 'D. 12'],
+            answer: 'B',
+          },
+          {
+            question:
+              '在人际吸引的影响因素中，可视为相似性的特殊形式的是（      ）。',
+            options: ['A. 熟悉', 'B. 互补', 'C. 邻近', 'D. 竞争'],
+            answer: 'B',
+          },
+          {
+            question: '个体努力表现，使他人对自己形成良好印象，这是(     )。',
+            options: [
+              'A. 光环效应',
+              'B. 印象管理',
+              'C. 刻板印象',
+              'D. 首因效应',
+            ],
+            answer: 'B',
+          },
+          {
+            question: '根据霍兰德的观点，社会心理学的形成期是在（      ）。',
+            options: [
+              'A. 社会哲学阶段',
+              'B. 哲学思辨阶段',
+              'C. 经验描述阶段',
+              'D. 实证分析阶段',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '海德的态度转变理论是（      ）。',
+            options: [
+              'A. 角色理论',
+              'B. 认知失调论',
+              'C. 平衡理论',
+              'D. 社会交换论',
+            ],
+            answer: 'C',
+          },
+          {
+            question: '关于暗示，错误的说法是（     ）。',
+            options: [
+              'A. 被暗示者处于困难情境有缺乏社会支持时容易接受暗示',
+              'B. 年龄越小是个体约容易接受暗示',
+              'C. 有人格魅力的暗示者暗示效果较好',
+              'D. 总的来说男性和女性在易受暗示性方面没有差异',
+            ],
+            answer: 'D',
+          },
+          {
+            question:
+              '以下各项中不属于《中国心理学会临床与咨询心理学工作伦理守则》所规定的心理咨询专业伦理的主要原则的是（      ）。',
+            options: ['A. 善行', 'B. 诚信', 'C. 责任', 'D. 热情'],
+            answer: 'D',
+          },
+          {
+            question: '以下咨询师和来访者属于双重关系的是（     ）。',
+            options: [
+              'A. 咨询师为自己的学生进行咨询',
+              'B. 为同事转介的来访者咨询',
+              'C. 来访者事先通过网络了解的咨询师',
+              'D. 由网络咨询变为面询',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '“最近发展区” 是指（      ）。',
+            options: [
+              'A. 儿童借助成人的帮助所达到的解决问题的水平',
+              'B. 在独立活动中所达到的解决问题的水平',
+              'C. 在有指导的情境下，儿童借助成人的帮助所达到的解决问题的水平与在独立活动中所达到的解决问题的水平之间的差距。',
+              'D. 儿童先天具有的水平和后天发展的水平的差异。',
+            ],
+            answer: 'C',
+          },
+          {
+            question:
+              '在科尔伯格的道德发展理论中，服从和惩罚的道德定向阶段的儿童，其个体特征是（      ）。',
+            options: [
+              'A. 对成人或规章采取服从的态度，以免受到惩罚',
+              'B. 认为每个人都有自己的意图和需要',
+              'C. 认识到必须尊重他人的想法和看法',
+              'D. 强调对法律和权威的服从',
+            ],
+            answer: 'A',
+          },
+          {
+            question: '视觉悬崖是研究婴儿的（     ）装置。',
+            options: [
+              'A. 形状知觉',
+              'B. 颜色知觉',
+              'C. 动作发展',
+              'D. 深度知觉',
+            ],
+            answer: 'D',
+          },
+          {
+            question: '人的记忆广度达到一生中的顶峰是在（     ）。',
+            options: ['A. 幼儿期', 'B. 童年期', 'C. 少年期', 'D. 青年期'],
+            answer: 'C',
+          },
+        ],
+        multi: [
+          {
+            question: '影响问题解决的主要因素包括（ ）。',
+            options: [
+              'A. 迁移作用',
+              'B. 原型启发作用',
+              'C. 定势作用',
+              'D. 动机作用',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '个体社会化的主要载体包括（ ）。',
+            options: ['A. 家庭', 'B. 大众传媒', 'C. 学校', 'D. 交通工具'],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '婴儿动作发展遵循的原则包括（ ）。',
+            options: [
+              'A. 上下原则',
+              'B. 头尾原则',
+              'C. 近远原则',
+              'D. 大小原则',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '不协调性精神运动性兴奋的特点包括（ ）。',
+            options: [
+              'A. 动作和行为无目的',
+              'B. 行为杂乱无章难以理解',
+              'C. 动作和行为可理解',
+              'D. 行为的增加与环境一致',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '许又新提出的心理健康标准包括（ ）。',
+            options: [
+              'A. 体验标准',
+              'B. 操作标准',
+              'C. 发展标准',
+              'D. 内省标准',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question:
+              '根据《心理咨询师国家职业标准》（2005版），正确的说法包括（ ）。',
+            options: [
+              'A. 心理咨询师需要掌握心理学的理论和技能知识',
+              'B. 心理咨询师只能进行心理咨询，不能进行心理治疗',
+              'C. 咨询关系是一种“求”和“帮”的关系',
+              'D. 心理咨询师帮助求助者解决心理问题和相关行为问题',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '会谈中不恰当的提问方式包括（ ）。',
+            options: [
+              'A. 修饰性反问',
+              'B. 责备性问题',
+              'C. 敢于尝试',
+              'D. 严于律己',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '心理咨询的终极目标包括（ ）。',
+            options: [
+              'A. 近期目标和远期目标的整合',
+              'B. 激发求助者的潜能',
+              'C. 促进求助者心理健康和发展',
+              'D. 完善求助者的人格',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '倾听时容易出现的错误包括（ ）。',
+            options: [
+              'A. 不做道德性判断',
+              'B. 急于下结论',
+              'C. 轻视求助者问题',
+              'D. 转移求助者话题',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '目光注视的一般规律（ ）。',
+            options: [
+              'A. 倾听时，注视对方双眼',
+              'B. 说话时比倾听时注视对方多一些',
+              'C. 开始说话时，将目光从对方身上移开',
+              'D. 讲话结束时，将目光重新回到对方身上',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '来访者有权向心理咨询师了解的相关事项包括（ ）。',
+            options: [
+              'A. 心理测量与评估的意义，以及测验和结果报告的用途',
+              'B. 其他来访者的咨询效果',
+              'C. 专业服务可能带来的好处和风险',
+              'D. 专业服务的过程和局限',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '16PF量表中乐群性高分者的人格特征是（ ）。',
+            options: ['A. 冷淡', 'B. 环性情感', 'C. 外向', 'D. 分裂情感'],
+            answer: ['B', 'C'],
+          },
+          {
+            question: '下列选项中属于无条件反射的是（ ）。',
+            options: [
+              'A. 吃东西流口水',
+              'B. 强光照射下瞳孔收缩',
+              'C. 看见酸梅就流口水',
+              'D. 一朝被蛇咬，十年怕井绳',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question:
+              '根据社会心理学家的研究，个体归因时遵循的主要原则包括（ ）。',
+            options: [
+              'A. 不变性原则',
+              'B. 折扣原则',
+              'C. 情感一致性原则',
+              'D. 协变原则',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '社会学习理论强调儿童习得社会行为的主要方式是（ ）。',
+            options: [
+              'A. 观察学习',
+              'B. 机体成熟',
+              'C. 替代性强化',
+              'D. 社会环境',
+            ],
+            answer: ['A', 'C'],
+          },
+          {
+            question:
+              '咨询过程中，心理咨询师提问过多，可能带来的消极作用包括（      ）。',
+            options: [
+              'A. 造成求助者的依赖',
+              'B. 解决问题的责任转移到咨询师身上',
+              'C. 产生不准确的信息',
+              'D. 增加了求助者的自我探索',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '咨询过程中，选择会谈内容的原则包括（      ）。',
+            options: [
+              'A. 求助者可接受',
+              'B. 积极',
+              'C. 可以量化评估',
+              'D. 有效',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '咨询师在初诊接待应确保求助者了解的内容包括（      ）。',
+            options: [
+              'A. 保密原则及保密例外',
+              'B. 心理咨询如何进行',
+              'C. 心理咨询解决什么问题',
+              'D. 心理咨询不能解决什么',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '社会支持评定量表的维度包括（      ）。',
+            options: [
+              'A. 总分',
+              'B. 客观支持',
+              'C. 主观支持',
+              'D. 对社会支持的利用度',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question:
+              '对求助者心理状况及自我意识等相关问题的评估，评估内容应包括（      ）。',
+            options: [
+              'A. 现实检验能力',
+              'B. 判断力和自知力',
+              'C. 情感和心境、定向力和意识',
+              'D. 基本的感知觉、认知、外表、语言和思维',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question:
+              '咨询师对求助者说：“你的情绪问题是由于你的认知引起的，你需要改变你的认知，才能解决情绪困扰”，咨询师使用的技术包括（      ）。',
+            options: ['A. 释义', 'B. 指导', 'C. 解释', 'D. 内容表达'],
+            answer: ['B', 'C'],
+          },
+          {
+            question:
+              '心理咨询师对求助者说：“通过咨询，你产生了巨大变化，我为你感到高兴”，咨询师所使用的技术包括（      ）。',
+            options: [
+              'A. 情感反应',
+              'B. 自我开放',
+              'C. 情感表达',
+              'D. 内容表达',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '使用封闭式提问的目的包括（      ）。',
+            options: [
+              'A. 澄清事实',
+              'B. 消除自我防御',
+              'C. 获取重点',
+              'D. 促进自我开放',
+            ],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '对咨询目标的理解，正确的包括（      ）。',
+            options: [
+              'A. 近期目标和远期目标应该是统一的',
+              'B. 对同一个求助者可以制定多个咨询目标',
+              'C. 咨访双方的目标不一致时，应以咨询师的目标为主',
+              'D. 不同的求助者，终极目标都是相同的',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '共情的含义包括（      ）。',
+            options: [
+              'A. 共情是指咨询师体验求助者内心世界的能力',
+              'B. 咨询师通过求助者的言行，深入对方内心去体验他的情感与思维',
+              'C. 咨询师借助知识和经验，深刻理解求助者心理和具体问题的实质',
+              'D. 咨询师运用咨询技巧，把自己的共情传达给对方',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '尊重在咨询中的作用包括（      ）。',
+            options: [
+              'A. 使求助者人格产生建设性的改变',
+              'B. 使求助者获得自我价值感',
+              'C. 使咨询师更加客观地看待求助者',
+              'D. 开发求助者的潜能',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '阻抗产生的原因包括（      ）。',
+            options: [
+              'A. 功能性的行为失调',
+              'B. 成长带来的痛苦',
+              'C. 生理机能严重丧失',
+              'D. 反抗咨询师的动机',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question:
+              '来源于求助者方面影响咨询关系建立与维护的因素包括（      ）。',
+            options: [
+              'A. 咨询理念',
+              'B. 咨询态度',
+              'C. 悟性水平',
+              'D. 行为方式',
+            ],
+            answer: ['C', 'D'],
+          },
+          {
+            question: '咨询师使用面质技术时应注意（      ）。',
+            options: [
+              'A. 要具备充足的理论知识',
+              'B. 避免个人发泄',
+              'C. 要以良好咨询关系为基础',
+              'D. 以求助者请求为准',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '可以反映咨询师失去真诚态度的行为包括（      ）。',
+            options: [
+              'A. 给求助者贴标签',
+              'B. 专业术语过多',
+              'C. 做道德性评判',
+              'D. 不容许求助者质疑',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '内容表达技术包括（      ）。',
+            options: ['A. 反馈', 'B. 提出忠告', 'C. 建议', 'D. 自我开放'],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '阳性强化法中，对强化物的要求包括（      ）。',
+            options: [
+              'A. 对求助者有足够的吸引力',
+              'B. 只采用物质刺激',
+              'C. 在未来可以实现的',
+              'D. 是求助者喜欢的',
+            ],
+            answer: ['A', 'D'],
+          },
+          {
+            question: '有效咨询目标的特点包括（      ）。',
+            options: [
+              'A. 属于心理学范畴',
+              'B. 求助者接受的',
+              'C. 单一而具体',
+              'D. 具体或量化的',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '以下属于合理情绪疗法的不完美目标包括（      ）。',
+            options: [
+              'A. 改变情绪',
+              'B. 改变认知',
+              'C. 改变行为',
+              'D. 完善人格',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '咨询师使用释义技术的目的包括（      ）。',
+            options: [
+              'A. 指出求助者身上存在的矛盾，促进求助者的探索',
+              'B. 加强理解、促进沟通',
+              'C. 对某些抽象、复杂的心理现象和过程进行解释',
+              'D. 使求助者有机会再次剖析自己的困扰',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '思维操作的基本形式包括（      ）。',
+            options: ['A. 分析', 'B. 抽象', 'C. 综合', 'D. 概括'],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '梦境的主要特点包括（      ）。',
+            options: [
+              'A. 不连续性',
+              'B. 认知的不确定性',
+              'C. 不协调性',
+              'D. 创造性',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '彩色的特性包括（      ）。',
+            options: ['A. 饱和度', 'B. 明度', 'C. 照度', 'D. 色调'],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '长时记忆遗忘的主要原因包括（      ）。',
+            options: [
+              'A. 自然衰退',
+              'B. 编码错误',
+              'C. 前摄抑制',
+              'D. 倒摄抑制',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '社会需要包括（      ）的需要。',
+            options: ['A. 求偶', 'B. 交往', 'C. 求知', 'D. 休息'],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '思维操作的基本形式包括（      ）。',
+            options: ['A. 分析', 'B. 抽象', 'C. 综合', 'D. 概括'],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '梦境的主要特点包括（      ）。',
+            options: [
+              'A. 不连续性',
+              'B. 认知的不确定性',
+              'C. 不协调性',
+              'D. 创造性',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '彩色的特性包括（      ）。',
+            options: ['A. 饱和度', 'B. 明度', 'C. 照度', 'D. 色调'],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '长时记忆遗忘的主要原因包括（      ）。',
+            options: [
+              'A. 自然衰退',
+              'B. 编码错误',
+              'C. 前摄抑制',
+              'D. 倒摄抑制',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '社会需要包括（      ）的需要。',
+            options: ['A. 求偶', 'B. 交往', 'C. 求知', 'D. 休息'],
+            answer: ['B', 'C'],
+          },
+          {
+            question: '按角色获得的方式可将角色分为（      ）。',
+            options: [
+              'A. 先赋角色',
+              'B. 功利角色',
+              'C. 表现角色',
+              'D. 成就角色',
+            ],
+            answer: ['A', 'D'],
+          },
+          {
+            question:
+              '在竞争的条件下，人们倾向于把他人的失败内归因，这是一种（      ）。',
+            options: [
+              'A. 自我障碍',
+              'B. 自我价值保护倾向',
+              'C. 自我防卫',
+              'D. 动机性归因偏差',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '关于态度转变的P-O-X模型，正确的说法包括（      ）。',
+            options: [
+              'A. P-O之间的关系最重要',
+              'B. P-O关系为肯定时的平衡为强平衡',
+              'C. P-O关系为否定时的平衡为弱平衡',
+              'D. P-O关系为否定时的不平衡为强不平衡',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '塔尔德的模仿律包括（      ）。',
+            options: [
+              'A. 下降律',
+              'B. 几何级数律',
+              'C. 上升律',
+              'D. 先内后外律',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '可以用于测量人际关系深度的指标包括（      ）。',
+            options: [
+              'A. 人际距离',
+              'B. 兴趣相近',
+              'C. 自我暴露程度',
+              'D. 职业互补',
+            ],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '处于前运算的儿童具有的特征包括（      ）。',
+            options: [
+              'A. 泛灵论',
+              'B. 自我中心',
+              'C. 思维的可逆性',
+              'D. 掌握守恒',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '婴儿动作发展遵循的原则包括（      ）。',
+            options: [
+              'A. 下上原则',
+              'B. 头尾原则',
+              'C. 近远原则',
+              'D. 大小原则',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '儿童发展的第一逆反期反抗的主要对象包括（      ）。',
+            options: ['A. 父母', 'B. 游戏玩伴', 'C. 老师', 'D. 其它养育者'],
+            answer: ['A', 'D'],
+          },
+          {
+            question: '中年期的人格变得较为成熟，具体表现为（      ）。',
+            options: [
+              'A. 内省日趋明显',
+              'B. 男性更加男性化，女性更加女性化',
+              'C. 为人处世日趋圆通',
+              'D. 心理防御机制用得越来越少',
+            ],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '少年期思维的特点包括（      ）。',
+            options: [
+              'A. 具体形象思维日益发达',
+              'B. 思维形式摆脱具体内容的束缚',
+              'C. 假设演绎推理能力的发展',
+              'D. 认识到解决问题的方法不止一个',
+            ],
+            answer: ['B', 'C'],
+          },
+          {
+            question: '创伤后应激障碍的典型症状包括（      ）。',
+            options: ['A. 选择性遗忘', 'B. 幻觉', 'C. 痛苦情绪泛化', 'D. 妄想'],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '压力的中介系统包括（     ）',
+            options: [
+              'A. 认知系统',
+              'B. 生物调节系统',
+              'C. 情绪系统',
+              'D. 社会支持系统',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '心理咨询师应具备的条件包括（     ）。',
+            options: [
+              'A. 自我修复能力',
+              'B. 强烈的助人动机',
+              'C. 自我觉察能力',
+              'D. 善于容纳他人',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '了解求助者的既往史时，应该包括的内容是（      ）。',
+            options: [
+              'A. 评论以往心理咨询过程中出现的失误',
+              'B. 对求助者的病因进行直接或间接介绍',
+              'C. 详细阅读以往的就医病历和有关资料',
+              'D. 详细询问是否去过其他心理咨询机构',
+            ],
+            answer: ['C', 'D'],
+          },
+          {
+            question: '心理咨询师的真诚可以表现为（     ）。',
+            options: [
+              'A. 如实告知自己的教育背景',
+              'B. 如实告知自己擅长的咨询内容',
+              'C. 咨询中更多地使用专业术语',
+              'D. 如实告知自己不擅长的咨询内容',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question:
+              '心理咨询师对求助者说：“通过咨询，你产生了巨大变化，我为你感到高兴”，咨询师所使用的技术包括 （      ）。',
+            options: [
+              'A. 情感反应',
+              'B. 自我开放',
+              'C. 情感表达',
+              'D. 内容表达',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '提出心理评估报告应该做的工作包括（      ）。',
+            options: [
+              'A. 设计临床干预方案',
+              'B. 核实各项临床资料',
+              'C. 分析导致求助者心理问题的可能原因',
+              'D. 评估求助者心理、生理及社会功能状态',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '罗杰斯强调的影响咨询结果的首要决定因素包括（  	)。',
+            options: [
+              'A. 求助者的个性',
+              'B. 咨询师的个性',
+              'C. 咨询师的态度',
+              'D. 咨询关系的质量',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '与其他人格量表相比，MMPI的主要优点是（      ）。',
+            options: [
+              'A. 临床诊断符合率较高',
+              'B. 首次将效度量表纳入人格量表',
+              'C. 广泛应用于人才选拔',
+              'D. 可揭示潜意识层次的动机冲突',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '心理咨询师专业成长的有效途径包括（    ）。',
+            options: [
+              'A. 参加专业组织，接受专业的指导和服务',
+              'B. 接受专业的督导',
+              'C. 参加专业的培训和继续教育',
+              'D. 利用专业资料和数据库',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '1. 自我意识第二次飞跃的主要表现为（ ）。',
+            options: [
+              'A. 十分关心自己的人格特征和情绪特征',
+              'B. 强烈关注自己的外貌和体征',
+              'C. 一系列关于"我"的问题开始反复萦绕于心',
+              'D. 自我评价开始具有批判性',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '2. 青春期思维的特点主要表现为（ ）。',
+            options: [
+              'A. 能够建立假设和检验假设',
+              'B. 思维形式与思维内容分离',
+              'C. 能够进行辨证思维',
+              'D. 认识到解决问题的方法的多样性',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '3. 小学阶段的儿童主要的记忆策略包括（ ）。',
+            options: ['A. 复述', 'B. 大脑风暴法', 'C. 组织', 'D. 语音记忆法'],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '4. 童年期思维的基本特点包括（ ）。',
+            options: [
+              'A. 经历一个思维发展的编制过程',
+              'B. 没有发生质变',
+              'C. 不能摆脱形象性的逻辑思维',
+              'D. 逻辑思维可以摆脱形象',
+            ],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '5. 处于他律道德判断阶段的儿童的特征包括（　　）。',
+            options: [
+              'A. 进行道德判断时主要依据行为的物质后果',
+              'B. 进行道德判断时不考虑行为者的主要动机',
+              'C. 道德判断受儿童自身以外的价值标准所支配',
+              'D. 已形成儿童自己的主观价值标准',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '影响问题解决的主要因素包括（      ）。',
+            options: [
+              'A. 迁移作用',
+              'B. 原型启发作用',
+              'C. 定势作用',
+              'D. 动机作用',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '个体社会化的主要载体包括（      ）。',
+            options: ['A. 家庭', 'B. 大众传媒', 'C. 学校', 'D. 交通工具'],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '婴儿动作发展遵循的原则包括（      ）。',
+            options: [
+              'A. 上下原则',
+              'B. 头尾原则',
+              'C. 近远原则',
+              'D. 大小原则',
+            ],
+            answer: ['B', 'C'],
+          },
+          {
+            question: '不协调性精神运动性兴奋的特点包括（      ）。',
+            options: [
+              'A. 动作和行为无目的',
+              'B. 行为杂乱无章难以理解',
+              'C. 动作和行为可理解',
+              'D. 行为的增加与环境一致',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '许又新提出的心理健康标准包括（      ）。',
+            options: [
+              'A. 体验标准',
+              'B. 操作标准',
+              'C. 发展标准',
+              'D. 内省标准',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question:
+              '根据《心理咨询师国家职业标准》（2005版），正确的说法包括（      ）。',
+            options: [
+              'A. 心理咨询师需要掌握心理学的理论和技能知识',
+              'B. 心理咨询师只能进行心理咨询，不能进行心理治疗',
+              'C. 咨询关系是一种“求”和“帮”的关系',
+              'D. 心理咨询师帮助求助者解决心理问题和相关行为问题',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '会谈中不恰当的提问方式包括（      ）。',
+            options: [
+              'A. 修饰性反问',
+              'B. 责备性问题',
+              'C. 敢于尝试',
+              'D. 严于律己',
+            ],
+            answer: ['B'],
+          },
+          {
+            question: '心理咨询的终极目标包括（      ）。',
+            options: [
+              'A. 近期目标和远期目标的整合',
+              'B. 激发求助者的潜能',
+              'C. 促进求助者心理健康和发展',
+              'D. 完善求助者的人格',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '倾听时容易出现的错误包括（      ）。',
+            options: [
+              'A. 不做道德性判断',
+              'B. 急于下结论',
+              'C. 轻视求助者问题',
+              'D. 转移求助者话题',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '目光注视的一般规律（      ）。',
+            options: [
+              'A. 倾听时，注视对方双眼',
+              'B. 说话时比倾听时注视对方多一些',
+              'C. 开始说话时，将目光从对方身上移开',
+              'D. 讲话结束时，将目光重新回到对方身上',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '来访者有权向心理咨询师了解的相关事项包括（    ）。',
+            options: [
+              'A. 心理测量与评估的意义, 以及测验和结果报告的用途',
+              'B. 其他来访者的咨询效果',
+              'C. 专业服务可能带来的好处和风险',
+              'D. 专业服务的过程和局限',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '16PF量表中乐群性高分者的人格特征是（      ）。',
+            options: ['A. 冷淡', 'B. 环性情感', 'C. 外向', 'D. 分裂情感'],
+            answer: ['C'],
+          },
+          {
+            question: '下列选项中属于无条件反射的是（      ）。',
+            options: [
+              'A. 吃东西流口水',
+              'B. 强光照射下瞳孔收缩',
+              'C. 看见酸梅就流口水',
+              'D. 一朝被蛇咬，十年怕井绳',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question:
+              '根据社会心理学家的研究，个体归因时遵循的主要原则包括（      ）。',
+            options: [
+              'A. 不变性原则',
+              'B. 折扣原则',
+              'C. 情感一致性原则',
+              'D. 协变原则',
+            ],
+            answer: ['B', 'D'],
+          },
+          {
+            question:
+              '社会学习理论强调儿童习得社会行为的主要方式是（      ）。',
+            options: [
+              'A. 观察学习',
+              'B. 机体成熟',
+              'C. 替代性强化',
+              'D. 社会环境',
+            ],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '经历强烈地震的个体有可能出现(      )。',
+            options: [
+              'A. 急性应激障碍',
+              'B. 创伤后应激障碍',
+              'C. 灾难征候群',
+              'D. 分裂样人格障碍',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '压力的中介系统包括（     ）。',
+            options: [
+              'A. 认知系统',
+              'B. 生物调节系统',
+              'C. 情绪系统',
+              'D. 社会支持系统',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '心理咨询师应具备的条件包括（     ）。',
+            options: [
+              'A. 自我修复能力',
+              'B. 强烈的助人动机',
+              'C. 自我觉察能力',
+              'D. 善于容纳他人',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question:
+              '在处理初期印象和新资料之间的矛盾时，心理咨询师应该（      ）。',
+            options: [
+              'A. 固守旧印象',
+              'B. 按标准程序重新收集资料',
+              'C. 尊重新资料',
+              'D. 随时准备调整自己的看法',
+            ],
+            answer: ['C', 'D'],
+          },
+          {
+            question: '心理咨询师的真诚可以表现为（     ）。',
+            options: [
+              'A. 如实告知自己的教育背景',
+              'B. 如实告知自己擅长的咨询内容',
+              'C. 咨询中更多地使用专业术语',
+              'D. 如实告知自己不擅长的咨询内容',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question:
+              '心理咨询师对求助者说：“通过咨询，你产生了巨大变化，我为你感到高兴”，咨询师所使用的技术包括 （      ）。',
+            options: [
+              'A. 情感反应',
+              'B. 自我开放',
+              'C. 情感表达',
+              'D. 内容表达',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question:
+              '根据心理咨询师的任务，心理咨询的临床实践等，对求助者的启发引导可以归纳为（    ）。',
+            options: [
+              'A. 启发引导求助者建立良好的人际关系',
+              'B. 深化自我认识，认识自己的内部、外部世界',
+              'C. 认识、领悟、解决内部冲突',
+              'D. 矫正错误认识',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '罗杰斯强调的影响咨询结果的首要决定因素包括（  	)。',
+            options: [
+              'A. 求助者的个性',
+              'B. 咨询师的个性',
+              'C. 咨询师的态度',
+              'D. 咨询关系的质量',
+            ],
+            answer: ['C', 'D'],
+          },
+          {
+            question: 'MMPI的缺点是（     ）。',
+            options: [
+              'A. 主观题较多',
+              'B. 受文化背景影响',
+              'C. 测试时间长',
+              'D. 受动机冲突影响',
+            ],
+            answer: ['B', 'C'],
+          },
+          {
+            question: '心理咨询师专业成长的有效途径包括（    ）。',
+            options: [
+              'A. 参加专业组织，接受专业的指导和服务',
+              'B. 接受专业的督导',
+              'C. 参加专业的培训和继续教育',
+              'D. 利用专业资料和数据库',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '关于定势的描述，正确的包括（      ）。',
+            options: [
+              'A. 是一种心理准备状态',
+              'B. 有时会促进问题解决',
+              'C. 有时会干扰问题解决',
+              'D. 是己有的知识和经验',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '常用的印象管理策略包括（      ）。',
+            options: [
+              'A. 隐藏自我',
+              'B. 投人所好',
+              'C. 自我抬高',
+              'D. 按社会期待管理自己',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+          {
+            question: '婴儿动作发展的规律性包括（      ）。',
+            options: [
+              'A. 从整体动作向分化动作发展',
+              'B. 从分化动作向整体动作发展',
+              'C. 从随意动作向不随意动作发展',
+              'D. 从不随意动作向随意动作发展',
+            ],
+            answer: ['A', 'D'],
+          },
+          {
+            question: '不协调性精神运动性兴奋的特点包括（      ）。',
+            options: [
+              'A. 动作和行为无目的',
+              'B. 行为杂乱无章难以理解',
+              'C. 动作和行为可理解',
+              'D. 行为的增加与环境一致',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '郭念锋提出的评估心理健康水平的标准包括（      ）。',
+            options: [
+              'A. 心理活动的灵活性',
+              'B. 自信心',
+              'C. 神经活动的平衡性',
+              'D. 暗示性',
+            ],
+            answer: ['B', 'D'],
+          },
+          {
+            question:
+              '根据《心理咨询师国家职业标准》（2005版），正确的说法包括（      ）。',
+            options: [
+              'A. 心理咨询师需要掌握心理学的理论和技能知识',
+              'B. 心理咨询师只能进行心理咨询，不能进行心理治疗',
+              'C. 咨询关系是一种“求”和“帮”的关系',
+              'D. 心理咨询师帮助求助者解决心理问题和相关行为问题',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question:
+              '心理咨询师在会谈中，应该进行的区分和鉴别包括（      ）。',
+            options: [
+              'A. 求助者亲友所提供资料的可靠程度',
+              'B. 求助者情绪体验在强度上是否夸张',
+              'C. 倾听中能否找到心理问题的关键点',
+              'D. 对会谈内容的真伪进行必要的鉴别',
+            ],
+            answer: ['B', 'D'],
+          },
+          {
+            question: '心理咨询的终极目标包括（      ）。',
+            options: [
+              'A. 近期目标和远期目标的整合',
+              'B. 激发求助者的潜能',
+              'C. 促进求助者心理健康和发展',
+              'D. 完善求助者的人格',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '对倾听正确的理解包括（      ）。',
+            options: [
+              'A. 积极地听',
+              'B. 思考地听',
+              'C. 认真地听',
+              'D. 不允许参与',
+            ],
+            answer: ['A', 'B', 'C'],
+          },
+          {
+            question: '目光注视的一般规律（      ）。',
+            options: [
+              'A. 倾听时，注视对方双眼',
+              'B. 说话时比倾听时注视对方多一些',
+              'C. 开始说话时，将目光从对方身上移开',
+              'D. 讲话结束时，将目光重新回到对方身上',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '来访者有权向心理咨询师了解的相关事项包括（    ）。',
+            options: [
+              'A. 心理测量与评估的意义, 以及测验和结果报告的用途',
+              'B. 其他来访者的咨询效果',
+              'C. 专业服务可能带来的好处和风险',
+              'D. 专业服务的过程和局限',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '16PF量表中乐群性高分者的人格特征是（      ）。',
+            options: ['A. 冷淡', 'B. 环性情感', 'C. 外向', 'D. 分裂情感'],
+            answer: ['B', 'C'],
+          },
+          {
+            question: '下列选项中属于无条件反射的是（      ）。',
+            options: [
+              'A. 吃东西流口水',
+              'B. 强光照射下瞳孔收缩',
+              'C. 看见酸梅就流口水',
+              'D. 一朝被蛇咬，十年怕井绳',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question:
+              '根据社会心理学家的研究，个体归因时遵循的主要原则包括（      ）。',
+            options: [
+              'A. 不变性原则',
+              'B. 折扣原则',
+              'C. 情感一致性原则',
+              'D. 协变原则',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question:
+              '社会学习理论强调儿童习得社会行为的主要方式是（      ）。',
+            options: [
+              'A. 观察学习',
+              'B. 机体成熟',
+              'C. 替代性强化',
+              'D. 社会环境',
+            ],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '创伤后应激障碍的典型症状包括（      ）。',
+            options: ['A. 选择性遗忘', 'B. 幻觉', 'C. 痛苦情绪泛化', 'D. 妄想'],
+            answer: ['A', 'C'],
+          },
+          {
+            question: '压力的中介系统包括（     ）',
+            options: [
+              'A. 认知系统',
+              'B. 生物调节系统',
+              'C. 情绪系统',
+              'D. 社会支持系统',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question: '心理咨询师应具备的条件包括（     ）。',
+            options: [
+              'A. 自我修复能力',
+              'B. 强烈的助人动机',
+              'C. 自我觉察能力',
+              'D. 善于容纳他人',
+            ],
+            answer: ['A', 'C', 'D'],
+          },
+          {
+            question: '了解求助者的既往史时，应该包括的内容是（      ）。',
+            options: [
+              'A. 评论以往心理咨询过程中出现的失误',
+              'B. 对求助者的病因进行直接或间接介绍',
+              'C. 详细阅读以往的就医病历和有关资料',
+              'D. 详细询问是否去过其他心理咨询机构',
+            ],
+            answer: ['C', 'D'],
+          },
+          {
+            question: '心理咨询师的真诚可以表现为（     ）。',
+            options: [
+              'A. 如实告知自己的教育背景',
+              'B. 如实告知自己擅长的咨询内容',
+              'C. 咨询中更多地使用专业术语',
+              'D. 如实告知自己不擅长的咨询内容',
+            ],
+            answer: ['A', 'B', 'D'],
+          },
+          {
+            question:
+              '心理咨询师对求助者说：“通过咨询，你产生了巨大变化，我为你感到高兴”，咨询师所使用的技术包括 （      ）。',
+            options: [
+              'A. 情感反应',
+              'B. 自我开放',
+              'C. 情感表达',
+              'D. 内容表达',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '提出心理评估报告应该做的工作包括（      ）。',
+            options: [
+              'A. 设计临床干预方案',
+              'B. 核实各项临床资料',
+              'C. 分析导致求助者心理问题的可能原因',
+              'D. 评估求助者心理、生理及社会功能状态',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '罗杰斯强调的影响咨询结果的首要决定因素包括（  	)。',
+            options: [
+              'A. 求助者的个性',
+              'B. 咨询师的个性',
+              'C. 咨询师的态度',
+              'D. 咨询关系的质量',
+            ],
+            answer: ['B', 'C', 'D'],
+          },
+          {
+            question: '与其他人格量表相比，MMPI的主要优点是（      ）。',
+            options: [
+              'A. 临床诊断符合率较高',
+              'B. 首次将效度量表纳入个性量表',
+              'C. 广泛应用于人才选拔',
+              'D. 可揭示潜意识层次的动机冲突',
+            ],
+            answer: ['A', 'B'],
+          },
+          {
+            question: '心理咨询师专业成长的有效途径包括（    ）。',
+            options: [
+              'A.参加专业组织，接受专业的指导和服务',
+              'B.接受专业的督导',
+              'C.参加专业的培训和继续教育',
+              'D.利用专业资料和数据库',
+            ],
+            answer: ['A', 'B', 'C', 'D'],
+          },
+        ],
+        judge: [
+          {
+            question: '人脑最古老部位是脑干。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '社会化的载体不包括家庭。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '皮亚杰把儿童的心理发展划分为4个阶段。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '人耳对16~20000赫兹的声波最敏感。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '弗洛伊德认为，道德性焦虑中危险来自于超我。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '抑郁症是心理咨询的工作范围。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '20世纪20年代，临床心理学家将会谈法定义为有结构的交谈。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '提出心理评估报告时，需要对临床资料进行核实，一般使用的方法是实验法。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '内容反应的含义是心理咨询师解释心理问题的内容。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '16PF施测时的时间限制是40分钟。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '由于心理咨询师在价值观上的偏见而形成的咨询关系不匹配属于敏感型。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '咨询转介的正确做法是对新咨询师详细介绍情况。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '集体潜意识是弗洛伊德理论中的概念。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '幻想是一种精神病性症状。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '急性应激障碍的病程为数分钟至数小时。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '我国《心理咨询师国家职业标准》(试用)颁布于2001年。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '鼓励技术中最常用的方法是直接重复求助者的话。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '求助者的主要问题一定是最先提出的问题。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '合理情绪疗法不适用于年纪较大的求助者。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '出现阻抗属于正常现象，咨询师完全不必在意。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '主张人性是“有善有恶”的中国古代思想家是荀子。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '心理治疗的目的应该是发展病人的创造性潜力及完整的人格，而不是治疗症状，这是荣格的观点。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '婴儿动作发展的规律是从随意动作向不随意动作发展。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: 'MMPID量表不属于效度量表。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question:
+              '咨询师使用虚假信息、夸大疗效、隐瞒自己专业局限等行为主要违背了诚信原则。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '1. 集体潜意识是弗洛伊德理论中的概念。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '2. 幻想是一种精神病性症状。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '3. 求助者的主要问题一定是最先提出的问题。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '4. 压力源的性质包括生物性的和社会性的',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '5. 咨询转介的正确做法是对新咨询师详细介绍情况',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '调节内脏系统活动的皮层下中枢位于下丘脑。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '全部社会化的前提是道德社会化。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '皮亚杰把儿童的心理发展划分为4个阶段。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '无对象性的知觉是错觉。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '弗洛伊德认为，道德性焦虑中危险来自于超我。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '心理咨询对精神障碍患者的作用是精神分析。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '20世纪20年代，临床心理学家将会谈法定义为有结构的交谈。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '提出心理评估报告时，需要对临床资料进行核实，一般使用的方法是实验法。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '解释是为求助者提供新的思维方法。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '16PF施测时的时间限制是40分钟。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '由于心理咨询师在价值观上的偏见而形成的咨询关系不匹配属于敏感型。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '癔症型多话的求助者主要的目的获得赞赏。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '获得知情同意有两种常用方法：口头讨论和书面材料。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '多疑嫉妒属于社会环境性压力源。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '急性应激障碍的病程为数分钟至数小时。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '我国《心理咨询师国家职业标准》(试用版)颁布于2001年。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '鼓励技术中最常用的方法是直接重复求助者的话。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '调整认知可以作为咨询目标。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '合理情绪疗法不适用于年纪较大的求助者。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '呼吸放松法包括控制呼吸放松法。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '主张人性是“有善有恶”的中国古代思想家是荀子。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '心理治疗的目的应该是发展病人的创造性潜力及完整的人格，而不是治疗症状，这是荣格的观点。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '一般情况下，婴儿的分离焦虑要经历4个发展阶段。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: 'MMPI第一版共有14个量表，不属于效度量表的是D量表。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question:
+              '咨询师使用虚假信息、夸大疗效、隐瞒自己专业局限等行为主要违背了诚信原则。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '脑的最古老部位是脑干',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '家庭不是社会化的载体',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '皮亚杰把儿童的心理发展划分为4个阶段。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '人耳对16~20000赫兹的声波最敏感',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '弗洛伊德认为，道德性焦虑中危险来自于超我。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '人对现实事件的反应方式不包括悟性反应',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '20世纪20年代，临床心理学家将会谈法定义为有结构的交谈。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '提出心理评估报告时，需要对临床资料进行核实，一般使用的方法是实验法。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '内容反应的含义是心理咨询师解释心理问题的内容',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '16PF施测时的时间限制是40分钟',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '由于心理咨询师在价值观上的偏见而形成的咨询关系不匹配属于敏感型。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '咨询转介的正确做法是对新咨询师详细介绍情况',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '获得知情同意有两种常用方法：口头讨论和书面材料。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '压力源的性质包括生物性的和社会性的',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '急性应激障碍的病程为数分钟至数小时。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '我国《心理咨询师国家职业标准》(试用版)颁布于2001年。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '鼓励技术中最常用的方法是直接重复求助者的话。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '求助者的主要问题一定是最先提出的问题。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '合理情绪疗法不适用于年纪较大的求助者。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '出现阻抗属于正常现象，咨询师完全不必在意。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '主张人性是“有善有恶”的中国古代思想家是荀子。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '心理治疗的目的应该是发展病人的创造性潜力及完整的人格，而不是治疗症状，这是荣格的观点。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '婴儿动作发展的规律性是从随意动作向不随意动作发展。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: 'MMPI第一版共有14个量表，不属于效度量表的是D量表。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question:
+              '咨询师使用虚假信息、夸大疗效、隐瞒自己专业局限等行为主要违背了诚信原则。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '调节内脏系统活动的皮层下中枢位于下丘脑。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '全部社会化的前提是道德社会化。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '皮亚杰把儿童的心理发展划分为4个阶段。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '癔症型多话的求助者主要的目的获得赞赏。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '获得知情同意有两种常用方法：口头讨论和书面材料。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '多疑嫉妒属于社会环境性压力源。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '急性应激障碍的病程为数分钟至数小时。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '我国《心理咨询师国家职业标准》(试用版)颁布于2001年。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '鼓励技术中最常用的方法是直接重复求助者的话。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '调整认知可以作为咨询目标。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '合理情绪疗法不适用于年纪较大的求助者。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '呼吸放松法包括控制呼吸放松法。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '对可控性因素的归因，使人们更可能对行为做出准确的预测。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '调节内脏系统活动的皮层下中枢位于下丘脑。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '态度的ABC模型中，B指行为倾向。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '态度的特点不包括稳定性。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '人际关系是人与人在沟通与交往中建立起来的直接的行为上的联系。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '16PF施测时的时间限制是40分钟。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '为了防止新冠肺炎疫情，人群聚集时应该保持社交距离。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '一般单一性压力对人不一定是有害的。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question:
+              '根据心理能量所指向的身体部位，弗洛伊德把心理发展分为5个。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question:
+              '心理咨询师使用虚假信息、夸大疗效、隐瞒自己专业局限等行为主要违背了诚信原则。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '第一发展加速期是青年期。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '急性应激障碍的病程为数分钟至数小时。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '由于心理咨询师在价值观上的偏见而形成的咨询关系不匹配的类型属于敏感型。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '弗洛伊德认为，道德性焦虑中危险来自于超我。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '罗杰斯强调的影响咨询结果的首要决定因素是求助者的个性。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '我国《心理咨询师国家职业标准》(试用版)颁布于2001年。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '调整认知可以作为咨询目标。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '呼吸放松法包括控制呼吸放松法。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '主张人性是“有善有恶”的中国古代思想家是荀子。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question:
+              '心理治疗的目的应该是发展病人的创造性潜力及完整的人格，而不是治疗症状，这是荣格的观点。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '一般情况下，婴儿的分离焦虑要经历4个发展阶段。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '心理咨询对精神障碍患者的作用是精神分析。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '人耳对16~20000赫兹的声波最敏感。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+          {
+            question: '解释是为求助者提供新的思维方法。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'A',
+          },
+          {
+            question: '弗洛姆所称的逃避机制不包括独裁。',
+            options: ['A. 正确', 'B. 错误'],
+            answer: 'B',
+          },
+        ],
+      };
+
+      // 考试相关变量
+      let currentExam = [];
+      let currentQuestionIndex = 0;
+      let userAnswers = [];
+      let examStarted = false;
+      let scoreSettings = {
+        single: 0.65,
+        multi: 1,
+        judge: 0.4,
+      };
+      let typeIndexMap = {}; // 记录每种题型的题目序号
+
+      // 开始考试
+      function startExam() {
+        const includeSingle = document.getElementById('includeSingle').checked;
+        const includeMulti = document.getElementById('includeMulti').checked;
+        const includeJudge = document.getElementById('includeJudge').checked;
+
+        // 保存分值设置
+        scoreSettings.single =
+          parseFloat(document.getElementById('singleScore').value) || 0.65;
+        scoreSettings.multi =
+          parseFloat(document.getElementById('multiScore').value) || 1;
+        scoreSettings.judge =
+          parseFloat(document.getElementById('judgeScore').value) || 0.4;
+
+        if (!includeSingle && !includeMulti && !includeJudge) {
+          alert('请至少选择一种题目类型！');
+          return;
+        }
+
+        // 收集所有可选的题目
+        currentExam = [];
+        typeIndexMap = {
+          single: 1,
+          multi: 1,
+          judge: 1,
+        };
+
+        // 按单选→多选→判断的顺序添加题目
+        if (includeSingle) {
+          const singleCount = parseInt(
+            document.getElementById('singleCount').value
+          );
+          const availableSingle = questionBank.single.length;
+          const actualSingleCount = Math.min(singleCount, availableSingle);
+          const singleQuestions = getRandomQuestions(
+            questionBank.single,
+            actualSingleCount
+          ).map((q) => ({ ...q, type: 'single', score: scoreSettings.single }));
+          currentExam = currentExam.concat(singleQuestions);
+        }
+
+        if (includeMulti) {
+          const multiCount = parseInt(
+            document.getElementById('multiCount').value
+          );
+          const availableMulti = questionBank.multi.length;
+          const actualMultiCount = Math.min(multiCount, availableMulti);
+          const multiQuestions = getRandomQuestions(
+            questionBank.multi,
+            actualMultiCount
+          ).map((q) => ({ ...q, type: 'multi', score: scoreSettings.multi }));
+          currentExam = currentExam.concat(multiQuestions);
+        }
+
+        if (includeJudge) {
+          const judgeCount = parseInt(
+            document.getElementById('judgeCount').value
+          );
+          const availableJudge = questionBank.judge.length;
+          const actualJudgeCount = Math.min(judgeCount, availableJudge);
+          const judgeQuestions = getRandomQuestions(
+            questionBank.judge,
+            actualJudgeCount
+          ).map((q) => ({ ...q, type: 'judge', score: scoreSettings.judge }));
+          currentExam = currentExam.concat(judgeQuestions);
+        }
+
+        if (currentExam.length === 0) {
+          alert('没有可用的题目，请检查设置！');
+          return;
+        }
+
+        // 初始化用户答案数组
+        userAnswers = new Array(currentExam.length).fill(null);
+
+        // 显示考试界面
+        document.getElementById('intro').style.display = 'none';
+        document.getElementById('exam').style.display = 'block';
+        document.getElementById('result').style.display = 'none';
+
+        currentQuestionIndex = 0;
+        examStarted = true;
+
+        // 显示第一题
+        showQuestion();
+      }
+
+      // 从题库中随机抽取指定数量的题目
+      function getRandomQuestions(questions, count) {
+        const shuffled = shuffleArray([...questions]);
+        return shuffled.slice(0, count);
+      }
+
+      // 打乱数组顺序
+      function shuffleArray(array) {
+        return array.sort(() => 0.5 - Math.random());
+      }
+
+      // 显示当前题目
+      function showQuestion() {
+        const container = document.getElementById('questions-container');
+        const progress = document.getElementById('progress');
+
+        progress.textContent = `题目 ${currentQuestionIndex + 1}/${
+          currentExam.length
+        }`;
+
+        const question = currentExam[currentQuestionIndex];
+        container.innerHTML = '';
+
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question';
+
+        // 显示题目类型和序号
+        const typeText = document.createElement('div');
+        typeText.className = 'question-type';
+        let typeName = '';
+        switch (question.type) {
+          case 'single':
+            typeName = '单选题';
+            break;
+          case 'multi':
+            typeName = '多选题';
+            break;
+          case 'judge':
+            typeName = '判断题';
+            break;
+        }
+        typeText.innerHTML = `<span class="question-number">${
+          typeIndexMap[question.type]
+        }.</span> ${typeName} (${question.score}分)`;
+        typeIndexMap[question.type]++; // 增加该类型题目的序号
+        questionDiv.appendChild(typeText);
+
+        const questionText = document.createElement('p');
+        questionText.textContent = question.question;
+        questionDiv.appendChild(questionText);
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options';
+
+        // 根据题目类型创建不同的选项
+        if (question.type === 'single' || question.type === 'judge') {
+          question.options.forEach((option, index) => {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'option';
+
+            const optionLetter = String.fromCharCode(65 + index);
+            const inputId = `option-${currentQuestionIndex}-${index}`;
+
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = `question-${currentQuestionIndex}`;
+            input.id = inputId;
+            input.value = optionLetter;
+
+            // 如果用户之前已回答过此题，恢复答案
+            if (
+              userAnswers[currentQuestionIndex] &&
+              userAnswers[currentQuestionIndex].includes(optionLetter)
+            ) {
+              input.checked = true;
+            }
+
+            const label = document.createElement('label');
+            label.htmlFor = inputId;
+            label.textContent = option;
+
+            optionDiv.appendChild(input);
+            optionDiv.appendChild(label);
+            optionsDiv.appendChild(optionDiv);
+          });
+        } else if (question.type === 'multi') {
+          question.options.forEach((option, index) => {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'option';
+
+            const optionLetter = String.fromCharCode(65 + index);
+            const inputId = `option-${currentQuestionIndex}-${index}`;
+
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.name = `question-${currentQuestionIndex}`;
+            input.id = inputId;
+            input.value = optionLetter;
+
+            // 如果用户之前已回答过此题，恢复答案
+            if (
+              userAnswers[currentQuestionIndex] &&
+              userAnswers[currentQuestionIndex].includes(optionLetter)
+            ) {
+              input.checked = true;
+            }
+
+            const label = document.createElement('label');
+            label.htmlFor = inputId;
+            label.textContent = option;
+
+            optionDiv.appendChild(input);
+            optionDiv.appendChild(label);
+            optionsDiv.appendChild(optionDiv);
+          });
+        }
+
+        questionDiv.appendChild(optionsDiv);
+        container.appendChild(questionDiv);
+
+        // 滚动到顶部
+        window.scrollTo(0, 0);
+      }
+
+      // 保存当前题目的答案
+      function saveAnswer() {
+        const question = currentExam[currentQuestionIndex];
+        let selectedOptions = [];
+
+        if (question.type === 'single' || question.type === 'judge') {
+          const selected = document.querySelector(
+            `input[name="question-${currentQuestionIndex}"]:checked`
+          );
+          if (selected) {
+            selectedOptions = [selected.value];
+          }
+        } else if (question.type === 'multi') {
+          const selected = document.querySelectorAll(
+            `input[name="question-${currentQuestionIndex}"]:checked`
+          );
+          selectedOptions = Array.from(selected).map((input) => input.value);
+        }
+
+        userAnswers[currentQuestionIndex] = selectedOptions;
+      }
+
+      // 显示上一题
+      function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+          saveAnswer();
+          currentQuestionIndex--;
+
+          // 重置题型序号
+          resetTypeIndex();
+          showQuestion();
+        }
+      }
+
+      // 显示下一题
+      function nextQuestion() {
+        if (currentQuestionIndex < currentExam.length - 1) {
+          saveAnswer();
+          currentQuestionIndex++;
+          showQuestion();
+        }
+      }
+
+      // 重置题型序号
+      function resetTypeIndex() {
+        typeIndexMap = {
+          single: 1,
+          multi: 1,
+          judge: 1,
+        };
+
+        // 重新计算当前题目之前的题型序号
+        for (let i = 0; i < currentQuestionIndex; i++) {
+          const type = currentExam[i].type;
+          typeIndexMap[type]++;
+        }
+      }
+
+      // 提交考试
+      function submitExam() {
+        if (!confirm('确定要提交试卷吗？提交后将显示考试成绩和错题。')) {
+          return;
+        }
+
+        saveAnswer();
+
+        // 计算得分
+        let correctCount = 0;
+        let totalScore = 0;
+        let maxScore = 0;
+        const wrongAnswers = [];
+        const allAnswers = [];
+
+        currentExam.forEach((question, index) => {
+          const userAnswer = userAnswers[index] || [];
+          let isCorrect;
+
+          maxScore += question.score;
+
+          if (question.type === 'single' || question.type === 'judge') {
+            isCorrect =
+              userAnswer.length > 0 && userAnswer[0] === question.answer;
+          } else {
+            // 多选题需要答案完全匹配
+            const sortedUserAnswer = [...userAnswer].sort().join('');
+            const sortedCorrectAnswer = [...question.answer].sort().join('');
+            isCorrect = sortedUserAnswer === sortedCorrectAnswer;
+          }
+
+          if (isCorrect) {
+            correctCount++;
+            totalScore += question.score;
+          }
+
+          // 记录所有题目结果
+          allAnswers.push({
+            question: question,
+            index: index,
+            userAnswer: userAnswer,
+            isCorrect: isCorrect,
+            score: isCorrect ? question.score : 0,
+          });
+
+          // 记录错题
+          if (!isCorrect) {
+            wrongAnswers.push({
+              question: question,
+              index: index,
+            });
+          }
+        });
+
+        // 显示结果
+        document.getElementById('exam').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+
+        document.getElementById(
+          'score-display'
+        ).textContent = `得分: ${totalScore.toFixed(
+          2
+        )}分 (满分: ${maxScore.toFixed(2)}分)`;
+
+        const wrongAnswersContainer = document.getElementById('wrong-answers');
+        wrongAnswersContainer.innerHTML = '';
+
+        // 添加显示答对题目的开关事件
+        document
+          .getElementById('showCorrectResults')
+          .addEventListener('change', function () {
+            toggleCorrectResults(
+              this.checked,
+              allAnswers,
+              wrongAnswersContainer
+            );
+          });
+
+        if (wrongAnswers.length === 0) {
+          const message = document.createElement('p');
+          message.textContent = '恭喜！所有题目都答对了！';
+          message.style.textAlign = 'center';
+          message.style.color = '#27ae60';
+          message.style.fontWeight = 'bold';
+          wrongAnswersContainer.appendChild(message);
+        } else {
+          const title = document.createElement('h3');
+          title.textContent = '错题解析';
+          wrongAnswersContainer.appendChild(title);
+
+          wrongAnswers.forEach((item) => {
+            const userAnswer = userAnswers[item.index] || [];
+            wrongAnswersContainer.appendChild(
+              createAnswerDiv(
+                {
+                  question: item.question,
+                  index: item.index,
+                  userAnswer: userAnswer,
+                },
+                false
+              )
+            );
+          });
+        }
+
+        // 滚动到顶部
+        window.scrollTo(0, 0);
+      }
+
+      // 创建答案显示div
+      function createAnswerDiv(item, isCorrect) {
+        const question = item.question;
+        const answerDiv = document.createElement('div');
+        answerDiv.className = isCorrect ? 'all-answer' : 'wrong-answer';
+
+        const questionText = document.createElement('p');
+        questionText.textContent = `${item.index + 1}. ${question.question}`;
+        answerDiv.appendChild(questionText);
+
+        // 显示用户答案
+        const userAnswerText = document.createElement('p');
+        userAnswerText.innerHTML = `您的答案: <span class="user-answer">${formatAnswer(
+          item.userAnswer
+        )}</span>`;
+        answerDiv.appendChild(userAnswerText);
+
+        // 显示正确答案
+        const correctAnswerText = document.createElement('p');
+        correctAnswerText.innerHTML = `正确答案: <span class="correct-answer">${formatAnswer(
+          question.answer
+        )}</span>`;
+        answerDiv.appendChild(correctAnswerText);
+
+        // 显示分值
+        const scoreText = document.createElement('p');
+        scoreText.innerHTML = `分值: ${question.score}分 ${
+          isCorrect
+            ? `<span class="correct-answer">(得分: ${item.score}分)</span>`
+            : '<span class="user-answer">(得分: 0分)</span>'
+        }`;
+        answerDiv.appendChild(scoreText);
+
+        // 显示选项详情
+        const optionsDetail = document.createElement('div');
+        optionsDetail.style.marginTop = '10px';
+        optionsDetail.innerHTML = '<p>选项解析:</p>';
+
+        question.options.forEach((option, index) => {
+          const optionLetter = String.fromCharCode(65 + index);
+          const optionDiv = document.createElement('div');
+
+          // 判断是正确答案还是错误答案
+          let isCorrectOption = false;
+          if (Array.isArray(question.answer)) {
+            isCorrectOption = question.answer.includes(optionLetter);
+          } else {
+            isCorrectOption = question.answer === optionLetter;
+          }
+
+          // 判断是用户选择的错误答案
+          let isWrongSelected = false;
+          if (item.userAnswer) {
+            if (Array.isArray(item.userAnswer)) {
+              isWrongSelected =
+                item.userAnswer.includes(optionLetter) && !isCorrectOption;
+            } else {
+              isWrongSelected =
+                item.userAnswer === optionLetter && !isCorrectOption;
+            }
+          }
+
+          if (isCorrectOption) {
+            optionDiv.innerHTML = `<span class="correct-option">${option}</span> (正确答案)`;
+          } else if (isWrongSelected) {
+            optionDiv.innerHTML = `<span class="wrong-option">${option}</span> (错误选择)`;
+          } else {
+            optionDiv.textContent = option;
+          }
+
+          optionsDetail.appendChild(optionDiv);
+        });
+
+        answerDiv.appendChild(optionsDetail);
+
+        return answerDiv;
+      }
+
+      // 切换显示答对题目结果
+      function toggleCorrectResults(showCorrect, allAnswers, container) {
+        container.innerHTML = '';
+
+        const wrongAnswers = allAnswers.filter((item) => !item.isCorrect);
+        const correctAnswers = allAnswers.filter((item) => item.isCorrect);
+
+        if (wrongAnswers.length === 0 && !showCorrect) {
+          const message = document.createElement('p');
+          message.textContent = '恭喜！所有题目都答对了！';
+          message.style.textAlign = 'center';
+          message.style.color = '#27ae60';
+          message.style.fontWeight = 'bold';
+          container.appendChild(message);
+          return;
+        }
+
+        if (wrongAnswers.length > 0) {
+          const title = document.createElement('h3');
+          title.textContent = '错题解析';
+          container.appendChild(title);
+
+          wrongAnswers.forEach((item) => {
+            container.appendChild(
+              createAnswerDiv(
+                {
+                  question: item.question,
+                  index: item.index,
+                  userAnswer: item.userAnswer,
+                  score: item.score,
+                },
+                false
+              )
+            );
+          });
+        }
+
+        if (showCorrect && correctAnswers.length > 0) {
+          const title = document.createElement('h3');
+          title.textContent = '答对题目';
+          container.appendChild(title);
+
+          correctAnswers.forEach((item) => {
+            const answerDiv = createAnswerDiv(
+              {
+                question: item.question,
+                index: item.index,
+                userAnswer: item.userAnswer,
+                score: item.score,
+              },
+              true
+            );
+            answerDiv.style.display = 'block';
+            container.appendChild(answerDiv);
+          });
+        }
+      }
+
+      // 格式化答案显示
+      function formatAnswer(answer) {
+        if (Array.isArray(answer)) {
+          return answer.length > 0 ? answer.join(', ') : '未作答';
+        } else {
+          return answer || '未作答';
+        }
+      }
+
+      // 重新开始考试
+      function restartExam() {
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('intro').style.display = 'block';
+      }
+
+      // 页面加载时初始化
+      window.onload = function () {
+        // 设置默认值
+        document.getElementById('includeSingle').checked = true;
+        document.getElementById('includeMulti').checked = true;
+        document.getElementById('includeJudge').checked = true;
+      };
+      
+      // 页面加载时初始化
+      window.onload = function () {
+        // 设置默认值和最大值
+        document.getElementById('singleCount').value =
+          questionBank.single.length;
+        document.getElementById('singleCount').max = questionBank.single.length;
+        document.getElementById('multiCount').value = questionBank.multi.length;
+        document.getElementById('multiCount').max = questionBank.multi.length;
+        document.getElementById('judgeCount').value = questionBank.judge.length;
+        document.getElementById('judgeCount').max = questionBank.judge.length;
+
+        // 设置默认选中状态
+        document.getElementById('includeSingle').checked = true;
+        document.getElementById('includeMulti').checked = true;
+        document.getElementById('includeJudge').checked = true;
+      };
+    </script>
+  </body>
+</html>
